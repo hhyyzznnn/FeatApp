@@ -67,7 +67,9 @@ class HomePage extends StatelessWidget {
                   ElevatedButton(style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black87.withOpacity(1), shape: const CircleBorder(), padding: EdgeInsets.all(size.width * 0.1),
                       side: const BorderSide(color: Colors.white, width: 5)),
-                      onPressed: (){}, child: const Icon(Icons.add, color: Colors.white))
+                      onPressed: (){
+                        Navigator.pushNamed(context, 'signin');
+                      }, child: const Icon(Icons.add, color: Colors.white))
                 ],
               )
             ],),

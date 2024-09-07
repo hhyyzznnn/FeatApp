@@ -1,177 +1,241 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:permission_handler/permission_handler.dart';
 
-class ProFilePage extends StatelessWidget {
+class ProFilePage extends StatefulWidget {
   const ProFilePage({super.key});
 
   @override
+  State<ProFilePage> createState() => _ProFilePageState();
+}
+
+class _ProFilePageState extends State<ProFilePage> {
+  XFile? _image;
+  final ImagePicker picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    requestPermissions();
+  }
+
+  Future<void> requestPermissions() async {
+    final camStatus = await Permission.camera.request();
+    final phoStatus = await Permission.photos.request();
+  }
+
+  Future<void> pickImage(ImageSource source) async {
+    final pickedFile = await picker.pickImage(source: source);
+    if (pickedFile != null) {
+      setState(() {
+        _image = pickedFile;
+      });
+    }
+  }
+
+  void showPicker(BuildContext context) {
+    showModalBottomSheet(context: context, builder: (BuildContext context) {
+      return SafeArea(child: Wrap(
+        children: [
+          ListTile(
+              title: Text('카메라로 촬영'), onTap: () {
+            pickImage(ImageSource.camera);
+            Navigator.pop(context);
+          }),
+          ListTile(
+              title: Text('갤러리에서 선택'), onTap: () {
+            pickImage(ImageSource.gallery);
+            Navigator.pop(context);
+          }),
+          ListTile(
+              title: Text('취소'), onTap: () {
+            Navigator.pop(context);
+          }),
+        ],
+      ));
+    });
+  }
+
+  bool reqNotifications = false;
+  bool friNotifications = false;
+  bool allNotifications = false;
+
+  void toggleReqNotifications(bool? value) {
+    setState(() {
+      reqNotifications = value ?? false;
+    });
+  }
+
+  void toggleFriNotifications(bool? value) {
+    setState(() {
+      friNotifications = value ?? false;
+    });
+  }
+
+  void toggleAllNotifications(bool? value) {
+    setState(() {
+      allNotifications = value ?? false;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
-        body: Container(
-          padding: const EdgeInsets.fromLTRB(15, 50, 15, 15),
-          color: Colors.white,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  IconButton(onPressed: (){
-                    Navigator.pop(context);
-                  }, icon: const Icon(Icons.arrow_back, size: 30), color: Colors.black87),
-                  const Padding(
-                    padding: EdgeInsets.all(5.0),
-                    child: Text('프로필', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
-                  )
-                ],
-              ),
-              Container(
-                margin: const EdgeInsets.all(2.5),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: Colors.black87
-                ),
-                child: Column(
+        body: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.fromLTRB(
+              size.width * 0.025,
+              size.height * 0.035,
+              size.width * 0.025,
+              size.width * 0.015,
+            ),
+            color: Colors.white,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Row(
-                      children: [
-                        Stack(
-                          alignment: Alignment.bottomRight,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.all(25.0),
-                              child: CircleAvatar(
-                                radius: 100, backgroundImage: AssetImage('hanni.jpeg'),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ElevatedButton(style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.grey, shape: const CircleBorder(),
-                                  minimumSize: const Size(75, 75), side: const BorderSide(color: Colors.white, width: 5)),
-                                  onPressed: (){}, child: const Icon(Icons.camera_alt, color: Colors.white, size: 30,)),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          width: 200,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text('User Name', style: TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold)),
-                              Text('ID', style: TextStyle(color: Colors.white, fontSize: 20))
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
+                    IconButton(padding: EdgeInsets.zero, constraints: BoxConstraints(), onPressed: (){
+                      Navigator.pop(context);
+                    }, icon: Icon(Icons.arrow_back, size: size.width * 0.075), color: Colors.black87),
+                    Padding(
+                      padding: EdgeInsets.all(size.width * 0.015),
+                      child: Text('프로필', style: TextStyle(fontWeight: FontWeight.bold, fontSize: size.width * 0.065)),
+                    )
                   ],
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(10, 5, 0, 5),
-                child: Text('알림', style: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold)),
-              ),
-              Container(
-                margin: const EdgeInsets.all(2.5),
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Colors.black87),
-                child: Container(
-                  margin: EdgeInsets.all(5),
+                Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.black87
+                  ),
+                  child: Row(
+                    children: [
+                      Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(size.width * 0.05),
+                            child: CircleAvatar(
+                              radius: size.width * 0.2, backgroundImage: _image != null
+                                ? FileImage(  File(_image!.path))
+                                : const AssetImage('hanni.jpeg')
+                                  as ImageProvider,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(size.width * 0.025),
+                            child: ElevatedButton(style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.all(size.width * 0.025),backgroundColor: Colors.grey, shape: CircleBorder(), side: BorderSide(color: Colors.white, width: 3)),
+                                onPressed: () => showPicker(context),
+                                child: Icon(Icons.camera_alt, color: Colors.white, size: size.width * 0.075))
+                          )
+                        ],
+                      ),
+                      SizedBox(width: size.width * 0.03,),
+                      Column(
+                        children: [
+                          Text('User Name', style: TextStyle(color: Colors.white, fontSize: size.width * 0.06, fontWeight: FontWeight.bold)),
+                          Text('ID', style: TextStyle(color: Colors.white, fontSize: size.width * 0.05))
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(size.width * 0.025),
+                  child: Text('알림', style: TextStyle(fontSize: size.width * 0.04, color: Colors.grey, fontWeight: FontWeight.bold)),
+                ),
+                Container(
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Colors.black87),
                   child: Column(
                     children: [
                       ListTile(
                         leading: Icon(Icons.group, color: Colors.white,),
                         title: Text('친구 요청', style: TextStyle(color: Colors.white)),
                         trailing: CupertinoSwitch(
-                          value: false,
-                          activeColor: Colors.black87,
-                          onChanged: (bool? value) {},
+                          value: reqNotifications,
+                          activeColor: Colors.black,
+                          onChanged: toggleReqNotifications,
                         ),
                       ),
-                      Container(
-                        height: 1, width: MediaQuery.of(context).size.width * 0.85, color: Colors.grey,
-                      ),
+                      Divider(height: 1, color: Colors.grey,indent: size.width * 0.025, endIndent: size.width * 0.025),
                       ListTile(
                         leading: Icon(Icons.person, color: Colors.white,),
                         title: Text('친구 알림', style: TextStyle(color: Colors.white)),
                         trailing: CupertinoSwitch(
-                          value: false,
-                          activeColor: Colors.black87,
-                          onChanged: (bool? value) {},
+                          value: friNotifications,
+                          activeColor: Colors.black,
+                          onChanged: toggleFriNotifications,
                         ),
                       ),
-                      Container(
-                        height: 1, width: MediaQuery.of(context).size.width * 0.85, color: Colors.grey,
-                      ),
+                      Divider(height: 1, color: Colors.grey,indent: size.width * 0.025, endIndent: size.width * 0.025),
                       ListTile(
                         leading: Icon(Icons.notifications, color: Colors.white,),
                         title: Text('전체 알림', style: TextStyle(color: Colors.white),),
                         trailing: CupertinoSwitch(
-                          value: false,
-                          activeColor: Colors.black87,
-                          onChanged: (bool? value) {},
+                          value: allNotifications,
+                          activeColor: Colors.black,
+                          onChanged: toggleAllNotifications,
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(10, 5, 0, 5),
-                child: Text('개인정보', style: TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.bold)),
-              ),
-              Container(
-                width: double.infinity,
-                margin: const EdgeInsets.all(2.5),
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Colors.black87),
-                child: Container(
-                  margin: EdgeInsets.all(5),
+                Padding(
+                  padding: EdgeInsets.all(size.width * 0.025),
+                  child: Text('개인정보', style: TextStyle(fontSize: size.width * 0.04, color: Colors.grey, fontWeight: FontWeight.bold)),
+                ),
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Colors.black87),
                   child: Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 10, 300, 10),
-                        child: Text('이메일', style: TextStyle(fontSize: 15, color: Colors.white)),
+                      ListTile(onTap: () {}, dense: true,
+                        title: Text('이메일', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
+                        subtitle: Text('email@email.com', style: TextStyle(color: Colors.grey))
                       ),
-                      Container(
-                        height: 1, width: MediaQuery.of(context).size.width * 0.85, color: Colors.grey,
+                      Divider(height: 1,color: Colors.grey, indent: size.width * 0.025, endIndent: size.width * 0.025),
+                      ListTile(onTap: () {}, dense: true,
+                          title: Text('전화번호', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
+                          subtitle: Text('010 - 1234 - 5678', style: TextStyle(color: Colors.grey))
                       ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 10, 300, 10),
-                        child: Text('전화번호', style: TextStyle(fontSize: 15, color: Colors.white)),
-                      ),                    Container(
-                        height: 1, width: MediaQuery.of(context).size.width * 0.85, color: Colors.grey,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 10, 300, 10),
-                        child: Text('생년월일', style: TextStyle(fontSize: 15, color: Colors.white)),
-                      ),
+                      Divider(height: 1, color: Colors.grey, indent: size.width * 0.025, endIndent: size.width * 0.025),
+                      ListTile(onTap: () {}, dense: true,
+                          title: Text('생년월일', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
+                          subtitle: Text('2000 / 01 / 01', style: TextStyle(color: Colors.grey))
+          ),
                     ],
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                      padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-                      height: 50,
-                      width: MediaQuery.of(context).size.width * 0.45,
-                      margin: const EdgeInsets.all(2.5),
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Colors.black87),
-                      child: Text('계정 삭제', style: TextStyle(color: Colors.white), textAlign: TextAlign.center,)),
-                  Container(
-                      padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-                      height: 50,
-                      width: MediaQuery.of(context).size.width * 0.45,
-                      margin: const EdgeInsets.all(2.5),
-                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Colors.black87),
-                      child: Text('로그아웃', style: TextStyle(color: Colors.red), textAlign: TextAlign.center,))
-                ],
-              )
-            ],
+                SizedBox(
+                  height: size.height * 0.025,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                        height: size.height * 0.075,
+                        width: size.width * 0.45,
+                        margin: EdgeInsets.all(size.width * 0.01),
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Colors.black87),
+                        child: Center(child: Text('계정 삭제', style: TextStyle(color: Colors.white), textAlign: TextAlign.center,))),
+                    Container(
+                        height: size.height * 0.075,
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        margin: EdgeInsets.all(size.width * 0.01),
+                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Colors.black87),
+                        child: Center(child: Text('로그아웃', style: TextStyle(color: Colors.red), textAlign: TextAlign.center,))),
+                  ],
+                )
+              ],
+            ),
           ),
         )
     );

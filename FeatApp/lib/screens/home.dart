@@ -5,22 +5,24 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
-        appBar: PreferredSize(preferredSize: const Size.fromHeight(50.0),
+        appBar: PreferredSize(preferredSize: Size.fromHeight(size.height * 0.05),
             child: AppBar(
                 backgroundColor: Colors.white,
-                title: const Padding(
-                  padding: EdgeInsets.all(10.0),
-                  child: Text('Feat.', style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold, color: Colors.black87)),
-                ),
+                title: Text('Feat.', style: TextStyle(fontSize: size.height * 0.035,fontWeight: FontWeight.bold, color: Colors.black87)),
                 actions: [
-                  IconButton(onPressed: () {}, icon: const Icon(Icons.notifications_none, size: 30,), color: Colors.black87),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                      padding: EdgeInsets.symmetric(horizontal: size.width * 0.025),
+                      child: IconButton(padding: EdgeInsets.zero, constraints: BoxConstraints(),onPressed: () {},
+                          icon: Icon(Icons.notifications_none, size: size.height * 0.035), color: Colors.black87)),
+                  Padding(
+                    padding: EdgeInsets.only(right: size.width * 0.025),
                     child: InkWell(onTap: () {
                       Navigator.pushNamed(context, 'profile');
-                    }, borderRadius: BorderRadius.circular(15),child: ClipOval(
-                        child: Image.asset('/hanni.jpeg')
+                    }, borderRadius: BorderRadius.circular(size.height * 0.02), child: ClipOval(
+                        child: Icon(Icons.person, size: size.height * 0.035)
                     )),
                   )
                 ]
@@ -29,15 +31,15 @@ class HomePage extends StatelessWidget {
           color: Colors.white,
           child: Column(
             children: [
-              Container(margin: const EdgeInsets.all(20.0),
+              Container(margin: EdgeInsets.all(size.width * 0.03),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Music Name', style: TextStyle(fontSize: 20, height: 2.5)),
-                      Container(height: 50.0,decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0), color: Colors.black87))
+                      Text('Music Name', style: TextStyle(fontSize: size.width * 0.04, height: size.height * 0.0035)),
+                      Container(height: size.height * 0.06,decoration: BoxDecoration(borderRadius: BorderRadius.circular(size.width * 0.03), color: Colors.black87))
                     ]),
               ),
               SizedBox(
-                height: 550,
+                height: size.height * 0.6,
                 child: PageView.builder(
                   controller: PageController(initialPage: 0, viewportFraction: 0.8),
                   itemBuilder: (context, index) {
@@ -51,28 +53,23 @@ class HomePage extends StatelessWidget {
                 alignment: Alignment.center,
                 children: [
                   Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(30.0), color: Colors.black87),
-                      margin: const EdgeInsets.fromLTRB(30, 50, 30, 50),
+                      margin: EdgeInsets.all(size.width * 0.05),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          IconButton(onPressed: (){}, icon: const Padding(
-                            padding: EdgeInsets.fromLTRB(50, 15, 0, 15),
-                            child: Icon(Icons.date_range, color: Colors.white),
-                          )),
-                          IconButton(onPressed: (){}, icon: const Padding(
-                            padding: EdgeInsets.fromLTRB(0, 15, 50, 15),
-                            child: Icon(Icons.group, color: Colors.white),
-                          ))
+                          IconButton(onPressed: (){}, icon: Icon(Icons.date_range, color: Colors.white)),
+                          SizedBox(width: size.width * 0.2, height: size.height * 0.075,),
+                          IconButton(onPressed: (){}, icon: Icon(Icons.group, color: Colors.white))
                         ],
                       )),
                   ElevatedButton(style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black87, shape: const CircleBorder(), padding: const EdgeInsets.all(20),
-                      minimumSize: const Size(120, 120), side: const BorderSide(color: Colors.white, width: 5)),
+                      backgroundColor: Colors.black87.withOpacity(1), shape: const CircleBorder(), padding: EdgeInsets.all(size.width * 0.1),
+                      side: const BorderSide(color: Colors.white, width: 5)),
                       onPressed: (){}, child: const Icon(Icons.add, color: Colors.white))
                 ],
               )
             ],),
         )
-    );
+      );
   }
 }

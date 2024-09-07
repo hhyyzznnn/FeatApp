@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/home.dart';
 import 'screens/profile.dart';
+import 'screens/signup.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +15,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: HomePage(),
       routes: {
-        'profile': (context) => ProFilePage()
+        'profile': (context) => ProFilePage(),
+        'signup': (context) => SignUpPage()
       }
     );
   }

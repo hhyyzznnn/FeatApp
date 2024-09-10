@@ -24,7 +24,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
 
-  // 유저의 입력 아이디 패스워드 서버에 전송후 확인하는 과정
+  // 유저의 입력 아이디 패스워드 서버에 전송 후 확인하는 과정
 
   TextEditingController userIdController = TextEditingController();
   TextEditingController passwordController = TextEditingController();

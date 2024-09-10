@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'screens/home.dart';
 import 'screens/profile.dart';
 import 'screens/signup.dart';
-import 'package:feat/screens/signin.dart';
+import 'screens/signin.dart';
+import 'screens/camera.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,8 +19,10 @@ class MyApp extends StatelessWidget {
       routes: {
         'profile': (context) => ProFilePage(),
         'signup': (context) => SignUpPage(),
-        'signin': (context) => SignInPage()
+        'signin': (context) => SignInPage(),
+        'camera': (context) => CameraPage(),
       }
     );
   }
 }
+

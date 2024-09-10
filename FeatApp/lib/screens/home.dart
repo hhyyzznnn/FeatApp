@@ -59,7 +59,9 @@ class HomePage extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          IconButton(onPressed: (){}, icon: Icon(Icons.date_range, color: Colors.white)),
+                          IconButton(onPressed: (){
+                            Navigator.pushNamed(context, 'signin');
+                          }, icon: Icon(Icons.date_range, color: Colors.white)),
                           SizedBox(width: size.width * 0.2, height: size.height * 0.075,),
                           IconButton(onPressed: (){}, icon: Icon(Icons.group, color: Colors.white))
                         ],
@@ -68,7 +70,7 @@ class HomePage extends StatelessWidget {
                       backgroundColor: Colors.black87.withOpacity(1), shape: const CircleBorder(), padding: EdgeInsets.all(size.width * 0.1),
                       side: const BorderSide(color: Colors.white, width: 5)),
                       onPressed: (){
-                        Navigator.pushNamed(context, 'signin');
+                        Navigator.pushNamed(context, 'camera');
                       }, child: const Icon(Icons.add, color: Colors.white))
                 ],
               )

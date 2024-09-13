@@ -6,11 +6,11 @@ import 'screens/signin.dart';
 import 'screens/camera.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const FeatApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class FeatApp extends StatelessWidget {
+  const FeatApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,4 +25,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

@@ -220,18 +220,14 @@ class _ProFilePageState extends State<ProFilePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Container(
-                        height: size.height * 0.075,
-                        width: size.width * 0.45,
-                        margin: EdgeInsets.all(size.width * 0.01),
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Colors.black87),
-                        child: Center(child: Text('계정 삭제', style: TextStyle(color: Colors.white), textAlign: TextAlign.center,))),
-                    Container(
-                        height: size.height * 0.075,
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        margin: EdgeInsets.all(size.width * 0.01),
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Colors.black87),
-                        child: Center(child: Text('로그아웃', style: TextStyle(color: Colors.red), textAlign: TextAlign.center,))),
+                    ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), backgroundColor: Colors.black87,
+                        minimumSize: Size(size.width * 0.45, size.height * 0.075), alignment: Alignment.center),
+                        child: Text('계정 삭제', style: TextStyle(color: Colors.white),)),
+                    ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), backgroundColor: Colors.black87,
+                        minimumSize: Size(size.width * 0.45, size.height * 0.075), alignment: Alignment.center),
+                        child: Text('로그아웃', style: TextStyle(color: Colors.red),)),
                   ],
                 )
               ],

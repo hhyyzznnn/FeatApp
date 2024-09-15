@@ -29,6 +29,13 @@ class AlarmPage extends StatelessWidget {
           AlarmBox(),
           AlarmBox(),
           AlarmBox(),
+          AlarmBox(),
+          AlarmBox(),
+          AlarmBox(),
+          AlarmBox(),
+          AlarmBox(),
+          AlarmBox(),
+
         ],
       )
     );
@@ -40,19 +47,24 @@ class AlarmBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.fromLTRB(15, 15, 15, 0),
-      decoration: BoxDecoration(
-          color: Color(0xff3f3f3f),
-          borderRadius: BorderRadius.all(Radius.circular(10))
-      ),
-      child: ListTile(
-        leading: ClipRRect(
-          borderRadius: BorderRadius.circular(100.0),
-          child: Image.asset('hanni.jpeg'),
+    return GestureDetector(
+      onTap: () {
+
+      },
+      child: Container(
+        margin: EdgeInsets.fromLTRB(15, 15, 15, 0),
+        decoration: BoxDecoration(
+            color: Color(0xff3f3f3f),
+            borderRadius: BorderRadius.all(Radius.circular(10))
         ),
-        title: Text('User name', style: TextStyle(color: Colors.white, fontSize: 14)),
-        subtitle: Text('내용', style: TextStyle(color: Colors.white, fontSize: 14),),
+        child: ListTile(
+          leading: ClipRRect(
+            borderRadius: BorderRadius.circular(100.0),
+            child: Image.asset('hanni.jpeg'),
+          ),
+          title: Text('User name', style: TextStyle(color: Colors.white, fontSize: 14)),
+          subtitle: Text('내용', style: TextStyle(color: Colors.white, fontSize: 14),),
+        ),
       ),
     );
   }

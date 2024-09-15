@@ -10,6 +10,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
         appBar: PreferredSize(preferredSize: Size.fromHeight(size.height * 0.05),
             child: AppBar(
+                automaticallyImplyLeading: false,
                 backgroundColor: Colors.white,
                 title: Text('Feat.', style: TextStyle(fontSize: size.height * 0.035,fontWeight: FontWeight.bold, color: Colors.black87)),
                 actions: [

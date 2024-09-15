@@ -1,3 +1,4 @@
+import 'package:feat/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -51,7 +52,7 @@ class _LoginState extends State<Login> {
     if (response.statusCode == 200) {
       Navigator.push(context,
         MaterialPageRoute(
-          builder: (BuildContext context) => const NextPage(),
+          builder: (BuildContext context) => HomePage(),
         ),
       );
     } else {
@@ -67,6 +68,7 @@ class _LoginState extends State<Login> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Feat.'),
+        automaticallyImplyLeading: false,
         centerTitle: true,
       ),
       body: GestureDetector(
@@ -155,7 +157,7 @@ class _LoginState extends State<Login> {
               padding: const EdgeInsets.fromLTRB(0,40,0,0),
               child: ElevatedButton(
                 onPressed: (){
-                  login(context);
+
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,

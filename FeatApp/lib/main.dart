@@ -4,6 +4,7 @@ import 'screens/profile.dart';
 import 'screens/signup.dart';
 import 'screens/signin.dart';
 import 'screens/camera.dart';
+import 'screens/alarm.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,6 +22,7 @@ class MyApp extends StatelessWidget {
         'signup': (context) => SignUpPage(),
         'signin': (context) => SignInPage(),
         'camera': (context) => CameraPage(),
+        'alarm' : (context) => AlarmPage(),
       }
     );
   }

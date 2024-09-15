@@ -16,7 +16,7 @@ class HomePage extends StatelessWidget {
                   Padding(
                       padding: EdgeInsets.symmetric(horizontal: size.width * 0.025),
                       child: IconButton(padding: EdgeInsets.zero, constraints: BoxConstraints(),onPressed: () {
-                        Navigator.pushNamed(context, 'signup');
+                        Navigator.pushNamed(context, 'alarm');
                       },
                           icon: Icon(Icons.notifications_none, size: size.height * 0.035), color: Colors.black87)),
                   Padding(

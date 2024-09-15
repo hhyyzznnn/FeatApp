@@ -47,7 +47,10 @@ class AlarmBox extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(10))
       ),
       child: ListTile(
-        leading: Image.asset('hanni.jpeg'),
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(100.0),
+          child: Image.asset('hanni.jpeg'),
+        ),
         title: Text('User name', style: TextStyle(color: Colors.white, fontSize: 14)),
         subtitle: Text('내용', style: TextStyle(color: Colors.white, fontSize: 14),),
       ),

@@ -8,8 +8,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String? userId;
-  String? token;
 
   @override
   Widget build(BuildContext context) {

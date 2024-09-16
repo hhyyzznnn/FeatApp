@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:feat/screens/signin.dart';
 
 class ProFilePage extends StatefulWidget {
   const ProFilePage({super.key});
@@ -16,6 +18,15 @@ class _ProFilePageState extends State<ProFilePage> {
   final ImagePicker picker = ImagePicker();
 
   @override
+  Future<void> deleteUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('userId');
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => SignInPage())
+    );
+  }
+
   void initState() {
     super.initState();
     requestPermissions();
@@ -220,11 +231,14 @@ class _ProFilePageState extends State<ProFilePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(
+                    ElevatedButton(onPressed: () {
+                      deleteUserId(); // 정말 로그아웃하시겠습니까? 등 팝업창 추가해야함. 지금은 유저아이디 즉시 삭제.
+                    }, style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), backgroundColor: Colors.black87,
                         minimumSize: Size(size.width * 0.45, size.height * 0.075), alignment: Alignment.center),
                         child: Text('계정 삭제', style: TextStyle(color: Colors.white),)),
-                    ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(
+                    ElevatedButton(onPressed: () {
+                    }, style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), backgroundColor: Colors.black87,
                         minimumSize: Size(size.width * 0.45, size.height * 0.075), alignment: Alignment.center),
                         child: Text('로그아웃', style: TextStyle(color: Colors.red),)),

@@ -1,8 +1,20 @@
 import 'package:feat/screens/home.dart';
 import 'package:flutter/material.dart';
+import 'package:feat/screens/signin.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class AlarmPage extends StatelessWidget {
+class AlarmPage extends StatefulWidget {
   const AlarmPage({super.key});
+
+  @override
+  State<AlarmPage> createState() => _AlarmPageState();
+}
+
+class _AlarmPageState extends State<AlarmPage> {
+
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +34,8 @@ class AlarmPage extends StatelessWidget {
       ),
       body: ListView(
         children: [
+          AlarmBox(),
+          AlarmBox(),
           AlarmBox(),
           AlarmBox(),
           AlarmBox(),

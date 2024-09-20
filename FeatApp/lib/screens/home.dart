@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +75,10 @@ class HomePage extends StatelessWidget {
                       )),
                   ElevatedButton(style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black87.withOpacity(1), shape: const CircleBorder(), padding: EdgeInsets.all(size.width * 0.1),
-                      side: const BorderSide(color: Colors.white, width: 5)),
+                      side: const BorderSide(color: Colors.white, width: 7.5)),
                       onPressed: (){
                         Navigator.pushNamed(context, 'camera');
-                      }, child: const Icon(Icons.add, color: Colors.white))
+                      }, child: Icon(Icons.add, color: Colors.white, size: size.width * 0.1))
                 ],
               )
             ],),

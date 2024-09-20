@@ -8,8 +8,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:feat/screens/camera_preview.dart';
 
 
-
-
 class CameraPage extends StatefulWidget {
 
   CameraPage({super.key});
@@ -98,8 +96,7 @@ class _CameraPageState extends State<CameraPage> {
       });
 
       // 프리뷰 화면으로 이동
-      Navigator.push(
-        context,
+      Navigator.push(context,
         MaterialPageRoute(
           builder: (context) => PreviewPage(imagePath: _imagePath!),
         ),
@@ -157,6 +154,7 @@ class _CameraPageState extends State<CameraPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
     final containerWidth = size.width * 0.92;
     final containerHeight = containerWidth * 16 / 9;
 

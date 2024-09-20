@@ -1,3 +1,5 @@
+import 'package:feat/screens/home.dart';
+import 'package:feat/screens/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -94,7 +96,13 @@ class _SignState extends State<Sign> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(context,
+              MaterialPageRoute(
+                builder: (BuildContext context) => Login(),
+              ),
+            );
+          },
           icon: Icon(Icons.arrow_back),
         ),
         title: Text('회원가입', style: TextStyle(),),

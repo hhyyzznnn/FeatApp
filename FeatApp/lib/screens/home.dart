@@ -8,8 +8,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String? userId;
-  String? token;
 
   @override
   Widget build(BuildContext context) {
@@ -18,13 +16,14 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
         appBar: PreferredSize(preferredSize: Size.fromHeight(size.height * 0.05),
             child: AppBar(
+                automaticallyImplyLeading: false,
                 backgroundColor: Colors.white,
                 title: Text('Feat.', style: TextStyle(fontSize: size.height * 0.035,fontWeight: FontWeight.bold, color: Colors.black87)),
                 actions: [
                   Padding(
                       padding: EdgeInsets.symmetric(horizontal: size.width * 0.025),
                       child: IconButton(padding: EdgeInsets.zero, constraints: BoxConstraints(),onPressed: () {
-                        Navigator.pushNamed(context, 'signup');
+                        Navigator.pushNamed(context, 'alarm');
                       },
                           icon: Icon(Icons.notifications_none, size: size.height * 0.035), color: Colors.black87)),
                   Padding(

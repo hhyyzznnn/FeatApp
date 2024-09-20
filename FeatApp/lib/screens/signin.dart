@@ -1,4 +1,3 @@
-import 'package:feat/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -29,7 +28,6 @@ class _LoginState extends State<Login> {
 
   TextEditingController userIdController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  //final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   Future<void> login(BuildContext context) async {
     //서버로 데이터 전송시 json 형식으로 전환하는 코드
@@ -53,7 +51,7 @@ class _LoginState extends State<Login> {
     if (response.statusCode == 200) {
       Navigator.push(context,
         MaterialPageRoute(
-          builder: (BuildContext context) => HomePage(),
+          builder: (BuildContext context) => const NextPage(),
         ),
       );
     } else {
@@ -63,24 +61,12 @@ class _LoginState extends State<Login> {
   }
 
 
-  void showSnackBar(BuildContext context, Text text) {
-    final snackBar = SnackBar(
-      content: text,
-      backgroundColor: Color.fromARGB(255, 112, 48, 48),
-    );
-
-// Find the ScaffoldMessenger in the widget tree
-// and use it to show a SnackBar.
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Feat.'),
-        automaticallyImplyLeading: false,
         centerTitle: true,
       ),
       body: GestureDetector(
@@ -88,7 +74,6 @@ class _LoginState extends State<Login> {
           FocusScope.of(context).unfocus();
         },
         child: Column(
-          //key: _formKey,
           children: [
             SizedBox(
               child: Padding(
@@ -169,7 +154,9 @@ class _LoginState extends State<Login> {
             Padding(
               padding: const EdgeInsets.fromLTRB(0,40,0,0),
               child: ElevatedButton(
-                onPressed: () => login(context),
+                onPressed: (){
+                  login(context);
+                },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
                   backgroundColor: Colors.black,
@@ -190,15 +177,24 @@ class _LoginState extends State<Login> {
   }
 }
 
+
+void showSnackBar(BuildContext context, Text text) {
+  final snackBar = SnackBar(
+    content: text,
+    backgroundColor: Color.fromARGB(255, 112, 48, 48),
+  );
+
+// Find the ScaffoldMessenger in the widget tree
+// and use it to show a SnackBar.
+  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+}
+
+
 class NextPage extends StatelessWidget {
   const NextPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Text('로그인 성공'),
-    );
+    return Text('로그인 성공');
   }
 }
-
-

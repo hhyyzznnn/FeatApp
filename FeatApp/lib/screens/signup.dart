@@ -3,6 +3,7 @@ import 'package:feat/screens/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpPage extends StatelessWidget {
   const SignUpPage({super.key});
@@ -44,6 +45,12 @@ class Sign extends StatefulWidget {
 
 class _SignState extends State<Sign> {
 
+  Future<void> saveUserInfo(String userId, String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userId', userId);
+    await prefs.setString('token', token);
+  }
+
   final formKey = GlobalKey<FormState>();
 
   TextEditingController userNameController = TextEditingController();
@@ -84,6 +91,7 @@ class _SignState extends State<Sign> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
@@ -110,7 +118,6 @@ class _SignState extends State<Sign> {
             child: Column(
               children: [
                 SizedBox(height: 20),
-
                 //이름
                 SizedBox(
                   child: TextFormField(
@@ -125,11 +132,11 @@ class _SignState extends State<Sign> {
                     },
                     validator: (val) {
                       if (val!.isEmpty) {
-                        return '이름은 필수사항입니다.';
+                        return '이름은 필수 사항입니다.';
                       }
 
                       if (val.length < 2) {
-                        return '이름은 두글자 이상 입력 해주세요.';
+                        return '이름은 두 글자 이상 입력해주세요.';
                       }
 
                       return null;
@@ -154,7 +161,7 @@ class _SignState extends State<Sign> {
                     },
                     validator: (val) {
                       if(val!.isEmpty) {
-                        return '이메일은 필수사항입니다.';
+                        return '이메일은 필수 사항입니다.';
                       }
 
                       if(!RegExp(
@@ -185,7 +192,7 @@ class _SignState extends State<Sign> {
                     },
                     validator: (val) {
                       if(val!.isEmpty){
-                        return '아이디는 필수사항입니다.';
+                        return '아이디는 필수 사항입니다.';
                       }
                       if(val.length < 8){
                         return '아이디는 8자 이상 입력해주세요.';

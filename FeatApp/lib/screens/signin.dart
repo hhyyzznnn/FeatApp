@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:feat/screens/home.dart';
-import 'package:feat/screens/signup.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:feat/screens/home.dart';
 
 class SignInPage extends StatelessWidget {
   const SignInPage({super.key});
@@ -28,6 +28,11 @@ class _LoginState extends State<Login> {
 
   // 유저의 입력 아이디 패스워드 서버에 전송 후 확인하는 과정
 
+  Future<void> saveUserId(String userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userId', userId);
+  }
+
   TextEditingController userIdController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -51,10 +56,11 @@ class _LoginState extends State<Login> {
     );
 
     if (response.statusCode == 200) {
+      saveUserId(userId);
       Navigator.push(context,
         MaterialPageRoute(
-          builder: (BuildContext context) => const HomePage(),
-        ),
+          builder: (context) => const HomePage(),
+        )
       );
     } else {
       showSnackBar(context, const Text('아이디 또는 비밀번호가 잘못되었습니다. 아이디와 비밀번호를 정확히 입력해주세요.'));
@@ -65,10 +71,10 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         title: Text('Feat.'),
         centerTitle: true,
       ),
@@ -103,7 +109,6 @@ class _LoginState extends State<Login> {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(60, 10, 60, 10),
                 child: TextFormField(
-                    obscureText: true,
                     controller: passwordController,
                     decoration: InputDecoration(
                         enabledBorder: UnderlineInputBorder(),
@@ -121,35 +126,35 @@ class _LoginState extends State<Login> {
               ),
             ),
             Container(
-              padding: EdgeInsets.fromLTRB(60, 0, 60, 0),
+              padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
               child: Row(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => SignUpPage(),
-                        ),
-                      );
-                    },
-                    child: Text('회원가입', style: TextStyle(color: Colors.grey),),
+                  TextButton(onPressed: () {
+
+                  },
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.grey,
+                    ),
+                    child: Text('회원가입'),
                   ),
                   Spacer(),
                   Row(
                     children: [
-                      GestureDetector(
-                        onTap: () {
-                          
-                        },
-                        child: Text('아이디 찾기', style: TextStyle(color: Colors.grey),),
-                      ),
-                      Text(' / ', style: TextStyle(color: Colors.grey),),
-                      GestureDetector(
-                        onTap: () {
-                          
-                        },
-                        child: Text('비밀번호 찾기', style: TextStyle(color: Colors.grey),),
-                      )
+                      TextButton(onPressed: () {
+
+                      },
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.grey,
+                          ),
+                          child: Text('아이디 찾기')),
+                      Text('/', style: TextStyle(color: Colors.grey),),
+                      TextButton(onPressed: () {
+
+                      },
+                          style: TextButton.styleFrom(
+                            foregroundColor: Colors.grey,
+                          ),
+                          child: Text('비밀번호 찾기')),
                     ],
                   )
                 ],

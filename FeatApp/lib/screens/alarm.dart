@@ -1,6 +1,5 @@
 import 'package:feat/screens/home.dart';
 import 'package:flutter/material.dart';
-import 'package:feat/screens/signin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
@@ -78,7 +77,7 @@ class AlarmBox extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () {
-
+        Navigator.pushNamed(context, 'calendar');
       },
       child: Container(
         margin: EdgeInsets.fromLTRB(25, 10, 20, 10),

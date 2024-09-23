@@ -12,6 +12,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    //final pageController = PageController(viewportFraction: 1.1);
 
     return Scaffold(
         appBar: PreferredSize(preferredSize: Size.fromHeight(size.height * 0.05),
@@ -22,7 +23,7 @@ class _HomePageState extends State<HomePage> {
                 actions: [
                   Padding(
                       padding: EdgeInsets.symmetric(horizontal: size.width * 0.025),
-                      child: IconButton(padding: EdgeInsets.zero, constraints: BoxConstraints(),onPressed: () {
+                      child: IconButton(padding: EdgeInsets.zero, constraints: BoxConstraints(), onPressed: () {
                         Navigator.pushNamed(context, 'alarm');
                       },
                           icon: Icon(Icons.notifications_none, size: size.height * 0.035), color: Colors.black87)),
@@ -44,24 +45,62 @@ class _HomePageState extends State<HomePage> {
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Music Name', style: TextStyle(fontSize: size.width * 0.04, height: size.height * 0.0035)),
-                      Container(height: size.height * 0.06,decoration: BoxDecoration(borderRadius: BorderRadius.circular(size.width * 0.03), color: Colors.black87))
+                      Container(
+                          height: size.height * 0.06,
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(size.width * 0.03),
+                          color: Color(0xff3f3f3f),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color(0xff000000).withOpacity(0.25),
+                                spreadRadius: 0,
+                                blurRadius: 4,
+                                offset: Offset(0, 4), // changes position of shadow
+                              ),
+                            ],
+                          )
+                      )
                     ]),
               ),
               SizedBox(
                 height: size.height * 0.6,
                 child: PageView.builder(
-                  controller: PageController(initialPage: 0, viewportFraction: 0.8),
+                  controller: PageController(viewportFraction: 0.8),
                   itemBuilder: (context, index) {
                     return Container(
-                      color: Colors.blue.withOpacity(index * 0.1),
+                      margin: EdgeInsets.only(right: 28),
+                      decoration: BoxDecoration(
+                        color: Color(0xffEBEBEB),
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xff000000).withOpacity(0.25),
+                            spreadRadius: 0,
+                            blurRadius: 10,
+                            offset: Offset(0, 4), // changes position of shadow
+                          ),
+                        ],
+                      ),
                     );
                   },
+                  //controller: PageController(initialPage: 0, viewportFraction: 0.8),
                 ),
               ),
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(30.0), color: Colors.black87),
+                  Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30.0),
+                        color: Color(0xff3f3f3f),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xff000000).withOpacity(0.25),
+                            spreadRadius: 0,
+                            blurRadius: 4,
+                            offset: Offset(0, 4), // changes position of shadow
+                          ),
+                        ],
+                      ),
                       margin: EdgeInsets.all(size.width * 0.05),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -76,7 +115,8 @@ class _HomePageState extends State<HomePage> {
                         ],
                       )),
                   ElevatedButton(style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black87.withOpacity(1), shape: const CircleBorder(), padding: EdgeInsets.all(size.width * 0.1),
+                      backgroundColor: Color(0xff3f3f3f).withOpacity(1),
+                      shape: const CircleBorder(), padding: EdgeInsets.all(size.width * 0.1),
                       side: const BorderSide(color: Colors.white, width: 7.5)),
                       onPressed: (){
                         Navigator.pushNamed(context, 'camera');

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:feat/screens/calender.dart';
+import 'package:feat/screens/home.dart';
 
 class FriendPage extends StatefulWidget {
   const FriendPage({super.key});
@@ -113,45 +115,43 @@ class friendComponent extends StatefulWidget {
 class _friendComponentState extends State<friendComponent> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.fromLTRB(25, 0, 20, 0),
-      width: 450,
-      height: 130,
-      child: Row(
-        children: [
-          Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.blue),
-          ),
-          Container(
-              width: 200,
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, 'signin');
+      },
+      child: Container(
+        margin: EdgeInsets.fromLTRB(25, 0, 20, 0),
+        width: 450,
+        height: 130,
+        child: Row(
+          children: [
+            Container(
+              width: 100,
               height: 100,
-              child: Column(
-                children: [
-                  Align(
-                    child:Container(
-                        margin: EdgeInsets.fromLTRB(10, 20, 0, 0),
-                        child: Text('친구1', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500))),
-                    alignment: Alignment.topLeft,
-                  ),
-                  Align(
-                    child: Container(
-                        margin: EdgeInsets.fromLTRB(12, 0, 0, 0),
-                        child: Text('ID', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500))),
-                    alignment: Alignment.topLeft,
-                  )
-                ],
-              )
-          ),
-          Spacer(),
-          Container(
-              child: IconButton(
-                  onPressed: (){},
-                  icon: Icon(Icons.calendar_today_outlined)
-              )
-          )
-        ],
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.blue),
+            ),
+            Container(
+                width: 200,
+                height: 100,
+                child: Column(
+                  children: [
+                    Align(
+                      child:Container(
+                          margin: EdgeInsets.fromLTRB(10, 20, 0, 0),
+                          child: Text('친구1', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500))),
+                      alignment: Alignment.topLeft,
+                    ),
+                    Align(
+                      child: Container(
+                          margin: EdgeInsets.fromLTRB(12, 0, 0, 0),
+                          child: Text('ID', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500))),
+                      alignment: Alignment.topLeft,
+                    )
+                  ],
+                )
+            ),
+          ],
+        ),
       ),
     );
   }

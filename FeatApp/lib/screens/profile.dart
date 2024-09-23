@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
@@ -5,6 +6,7 @@ import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:feat/screens/signin.dart';
+import 'package:http/http.dart' as http;
 
 class ProFilePage extends StatefulWidget {
   const ProFilePage({super.key});
@@ -25,8 +27,9 @@ class _ProFilePageState extends State<ProFilePage> {
       context,
       MaterialPageRoute(builder: (context) => SignInPage())
     );
-  }
+  } // 유저 아이디 기기에서 삭제하는 함수 (로그아웃)
 
+  @override
   void initState() {
     super.initState();
     requestPermissions();
@@ -35,7 +38,7 @@ class _ProFilePageState extends State<ProFilePage> {
   Future<void> requestPermissions() async {
     final camStatus = await Permission.camera.request();
     final phoStatus = await Permission.photos.request();
-  }
+  } // 카메라와 갤러리의 권한 획득 여부
 
   Future<void> pickImage(ImageSource source) async {
     final pickedFile = await picker.pickImage(source: source);
@@ -67,11 +70,11 @@ class _ProFilePageState extends State<ProFilePage> {
         ],
       ));
     });
-  }
+  } // 프로필 버튼 눌렀을 때 카메라, 갤러리 선택창 표시
 
   bool reqNotifications = false;
   bool friNotifications = false;
-  bool allNotifications = false;
+  bool allNotifications = false; // 알림 활성화 여부
 
   void toggleReqNotifications(bool? value) {
     setState(() {
@@ -91,12 +94,45 @@ class _ProFilePageState extends State<ProFilePage> {
     });
   }
 
+  Future<String?> getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('userId');
+  }
+
+  Future<void> fetchProfileData() async {
+    String? userId = await getUserId();
+
+    if (userId != null) {
+      final url = Uri.parse(''); // URL 추가
+      final response = await http.post(
+        url,
+        headers: {}, // 추가 코딩 필요
+        body: jsonEncode({'userId': userId})
+      );
+
+      if (response.statusCode == 200) {
+        final userData = jsonDecode(response.body);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+        appBar: AppBar(
+          leading: IconButton(padding: EdgeInsets.zero, constraints: BoxConstraints(), onPressed: (){
+            Navigator.pop(context);
+          }, icon: Icon(Icons.arrow_back, size: size.width * 0.075), color: Colors.black87),
+          title: Padding(
+            padding: EdgeInsets.all(size.width * 0.015),
+            child: Text('프로필', style: TextStyle(fontWeight: FontWeight.bold, fontSize: size.width * 0.065)),
+          ),
+          backgroundColor: Colors.white,
+          centerTitle: false,
+        ),
         body: SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.fromLTRB(
@@ -109,18 +145,6 @@ class _ProFilePageState extends State<ProFilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    IconButton(padding: EdgeInsets.zero, constraints: BoxConstraints(), onPressed: (){
-                      Navigator.pop(context);
-                    }, icon: Icon(Icons.arrow_back, size: size.width * 0.075), color: Colors.black87),
-                    Padding(
-                      padding: EdgeInsets.all(size.width * 0.015),
-                      child: Text('프로필', style: TextStyle(fontWeight: FontWeight.bold, fontSize: size.width * 0.065)),
-                    )
-                  ],
-                ),
                 Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
@@ -238,6 +262,7 @@ class _ProFilePageState extends State<ProFilePage> {
                         minimumSize: Size(size.width * 0.45, size.height * 0.075), alignment: Alignment.center),
                         child: Text('계정 삭제', style: TextStyle(color: Colors.white),)),
                     ElevatedButton(onPressed: () {
+                      deleteUserId();
                     }, style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), backgroundColor: Color(0xff3f3f3f),
                         minimumSize: Size(size.width * 0.45, size.height * 0.075), alignment: Alignment.center),

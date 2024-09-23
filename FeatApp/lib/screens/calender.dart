@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'ootd.dart';
 
-class Calender extends StatelessWidget {
-  Calender({super.key});
+class CalenderPage extends StatelessWidget {
+  CalenderPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return MaterialApp(
       home: Scaffold(
-          appBar: PreferredSize(
-              preferredSize: Size.fromHeight(100),
-              child: CalenderAppBar()
-          ),
+          appBar: AppBar(
+              backgroundColor: Colors.white,
+              leading: IconButton(onPressed: () {
+                Navigator.pop(context);
+                }, icon: Icon(Icons.arrow_back_rounded), iconSize: size.width * 0.075),
+              title: Text('달력')),
           body: Container(
               color: Colors.white,
               child: CalenderHomePage()
@@ -26,6 +29,7 @@ class CalenderAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Container(
       color: Colors.white,
       child: SafeArea(
@@ -33,7 +37,9 @@ class CalenderAppBar extends StatelessWidget {
           children: [
             Container(
                 margin: EdgeInsets.fromLTRB(20, 30, 10, 30),
-                child: IconButton(onPressed: (){}, icon: Icon(Icons.arrow_back_rounded), iconSize: 27)
+                child: IconButton(onPressed: () {
+                  Navigator.pop(context);
+                }, icon: Icon(Icons.arrow_back_rounded), iconSize: size.width * 0.075)
             ),
             Container(
                 margin:EdgeInsets.fromLTRB(10, 30, 7, 30),
@@ -192,12 +198,12 @@ class _CalenderHomePageState extends State<CalenderHomePage> {
         itemBuilder: (context, index){
           return Column(children: [
             Align(
+                alignment: Alignment.topLeft,
                 child: Container(
                   child: Text(yearAndMonth(index, widget.startYear, widget.startMonth)[0].toString() + '__' + yearAndMonth(index, widget.startYear, widget.startMonth)[1].toString() , style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600)),
                   margin: EdgeInsets.fromLTRB(20, 30, 0, 10),
                   decoration: BoxDecoration(color: Colors.white),
-                ),
-                alignment: Alignment.topLeft
+                )
             ),
             SizedBox(child: CalendarBar(), width: 450, height: 70),
             SizedBox(child: CalendarDateGridView(index: index), width: 450, height: 340)

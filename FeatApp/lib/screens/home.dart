@@ -67,10 +67,12 @@ class _HomePageState extends State<HomePage> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           IconButton(onPressed: (){
-                            Navigator.pushNamed(context, 'signin');
+                            Navigator.pushNamed(context, 'calender');
                           }, icon: Icon(Icons.date_range, color: Colors.white)),
                           SizedBox(width: size.width * 0.2, height: size.height * 0.075,),
-                          IconButton(onPressed: (){}, icon: Icon(Icons.group, color: Colors.white))
+                          IconButton(onPressed: (){
+                            Navigator.pushNamed(context, 'friendpage');
+                          }, icon: Icon(Icons.group, color: Colors.white))
                         ],
                       )),
                   ElevatedButton(style: ElevatedButton.styleFrom(

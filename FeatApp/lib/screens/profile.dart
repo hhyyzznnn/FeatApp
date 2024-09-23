@@ -124,7 +124,7 @@ class _ProFilePageState extends State<ProFilePage> {
                 Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
-                      color: Colors.black87
+                      color: Color(0xff3f3f3f)
                   ),
                   child: Row(
                     children: [
@@ -164,7 +164,7 @@ class _ProFilePageState extends State<ProFilePage> {
                   child: Text('알림', style: TextStyle(fontSize: size.width * 0.04, color: Colors.grey, fontWeight: FontWeight.bold)),
                 ),
                 Container(
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Colors.black87),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Color(0xff3f3f3f)),
                   child: Column(
                     children: [
                       ListTile(
@@ -205,7 +205,7 @@ class _ProFilePageState extends State<ProFilePage> {
                 ),
                 Container(
                   width: double.infinity,
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Colors.black87),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Color(0xff3f3f3f)),
                   child: Column(
                     children: [
                       ListTile(onTap: () {}, dense: true,
@@ -234,12 +234,12 @@ class _ProFilePageState extends State<ProFilePage> {
                     ElevatedButton(onPressed: () {
                       deleteUserId(); // 정말 로그아웃하시겠습니까? 등 팝업창 추가해야함. 지금은 유저아이디 즉시 삭제.
                     }, style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), backgroundColor: Colors.black87,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), backgroundColor: Color(0xff3f3f3f),
                         minimumSize: Size(size.width * 0.45, size.height * 0.075), alignment: Alignment.center),
                         child: Text('계정 삭제', style: TextStyle(color: Colors.white),)),
                     ElevatedButton(onPressed: () {
                     }, style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), backgroundColor: Colors.black87,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), backgroundColor: Color(0xff3f3f3f),
                         minimumSize: Size(size.width * 0.45, size.height * 0.075), alignment: Alignment.center),
                         child: Text('로그아웃', style: TextStyle(color: Colors.red),)),
                   ],

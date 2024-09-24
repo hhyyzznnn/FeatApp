@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:camera/camera.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
@@ -49,6 +49,7 @@ class _CameraPageState extends State<CameraPage> {
       });
     }
   }
+
   // 카메라와 저장소 권한을 요청
   Future<bool> requestPermissions() async {
     var cameraStatus = await Permission.camera.status;
@@ -153,8 +154,9 @@ class _CameraPageState extends State<CameraPage> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
+    final size = MediaQuery
+        .of(context)
+        .size;
     final containerWidth = size.width * 0.92;
     final containerHeight = containerWidth * 16 / 9;
 
@@ -195,7 +197,7 @@ class _CameraPageState extends State<CameraPage> {
             bottom: size.height * 0.14,
             child: IconButton(
               icon: SvgPicture.asset(
-                _isFlashOn ? 'assets/icons/flash_on.svg' : 'assets/icons/zap.svg',
+                _isFlashOn ? 'assets/icons/flash_on.svg' : 'assets/icons/flash_off.svg',
               ),
               onPressed: _toggleFlash,
             ),
@@ -205,7 +207,7 @@ class _CameraPageState extends State<CameraPage> {
             right: size.width * 0.06,
             bottom: size.height * 0.14,
             child: IconButton(
-              icon: SvgPicture.asset('assets/icons/refresh.svg'),
+              icon: SvgPicture.asset('assets/icons/refresh.svg') ,
               onPressed: _switchCamera,
             ),
           ),
@@ -217,14 +219,14 @@ class _CameraPageState extends State<CameraPage> {
             child: Center(
               child: InkWell(
                 onTap: () async {
-                  await _takePicture(); // 색상 변경 없이 사진 촬영만 실행
+                  await _takePicture();
                 },
                 customBorder: CircleBorder(),
                 child: Container(
                   width: size.width * 0.3,
                   height: size.width * 0.3,
                   decoration: BoxDecoration(
-                    color: Color(0xff3F3F3F), // 고정된 색상
+                    color: Color(0xff3F3F3F),
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.black, width: 10),
                   ),
@@ -264,7 +266,7 @@ class _CameraPageState extends State<CameraPage> {
             child: IconButton(
               icon: Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () {
-                Navigator.pop(context); // 뒤로가기 기능 추가
+                Navigator.pop(context);
               },
             ),
           ),

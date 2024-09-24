@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'music_rec.dart';
 
 class PreviewPage extends StatelessWidget {
   final String imagePath;
@@ -51,7 +52,10 @@ class PreviewPage extends StatelessWidget {
             child: Center(
               child: ElevatedButton(
                 onPressed: () {
-                  // 여기에 다른 화면으로 이동하는 코드 추가하셈
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MusicRecScreen()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xff3F3F3F), // 버튼 색상

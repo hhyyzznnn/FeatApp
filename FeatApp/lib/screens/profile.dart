@@ -20,15 +20,15 @@ class _ProFilePageState extends State<ProFilePage> {
   XFile? _image;
   final ImagePicker picker = ImagePicker();
 
-  List<String?> userSetting = []; // 유저 설정을 저장할 리스트
-  List<String?> userInfo = []; // 유저 정보를 저장할 리스트
+  Map userSetting = {}; // 유저 세팅을 저장할 맵
+  Map userInfo = {}; // 유저 정보를 저장할 리스트
 
 
   final String userId = "user1";
 
   Future<void> loadSettings() async {
 
-    final url = Uri.parse('http://localhost:8080/load/'); // 설정 서버 주소 추가
+    final url = Uri.parse('http://localhost:8080/load/alarmSetting'); // 설정 서버 주소 추가
     try {
       final response = await http.post(
         url,
@@ -38,11 +38,11 @@ class _ProFilePageState extends State<ProFilePage> {
 
       if (response.statusCode == 200) {
         setState(() {
-          userSetting = List<String?>.from(jsonDecode(response.body));
+          userSetting = Map.from(jsonDecode(response.body));
 
-          reqNotifications = userSetting[0] == 'true';
-          friNotifications = userSetting[1] == 'true';
-          allNotifications = userSetting[2] == 'true';
+          reqNotifications = userSetting['friendRequest'] == 'on';
+          friNotifications = userSetting['friendAlarm'] == 'on';
+          allNotifications = userSetting['entireAlarm'] == 'on';
           print(userSetting);
         });
       } else {
@@ -55,7 +55,7 @@ class _ProFilePageState extends State<ProFilePage> {
 
   Future<void> loadInfo() async {
 
-    final url = Uri.parse('http://localhost:8080/load/'); // 유저 정보 서버 주소 추가
+    final url = Uri.parse('http://localhost:8080/load/userInfo'); // 유저 정보 서버 주소 추가
     try {
       final response = await http.post(
         url,
@@ -65,7 +65,7 @@ class _ProFilePageState extends State<ProFilePage> {
 
       if (response.statusCode == 200) {
         setState(() {
-          userInfo = List<String?>.from(jsonDecode(response.body)); // JSON 데이터를 리스트로 변환
+          userInfo = Map.from(jsonDecode(response.body)); // JSON 데이터를 리스트로 변환
           print(userInfo);
         });
       } else {
@@ -242,7 +242,7 @@ class _ProFilePageState extends State<ProFilePage> {
                   child: Column(
                     children: [
                       ListTile(
-                        leading: Icon(Icons.group, color: Colors.white,),
+                        leading: Icon(Icons.group, color: Colors.white),
                         title: Text('친구 요청', style: TextStyle(color: Colors.white)),
                         trailing: CupertinoSwitch(
                           value: reqNotifications,
@@ -284,16 +284,16 @@ class _ProFilePageState extends State<ProFilePage> {
                     children: [
                       ListTile(onTap: () {}, dense: true,
                         title: Text('이메일', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
-                        subtitle: Text(userInfo[0]!, style: TextStyle(color: Colors.grey))
+                        subtitle: Text(userInfo['userEmail']!, style: TextStyle(color: Colors.grey))
                       ),
                       Divider(height: 1,color: Colors.grey, indent: size.width * 0.025, endIndent: size.width * 0.025),
                       ListTile(onTap: () {}, dense: true,
                           title: Text('전화번호', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
-                          subtitle: Text(userInfo[1]!, style: TextStyle(color: Colors.grey))
+                          subtitle: Text(userInfo['userPhone']!, style: TextStyle(color: Colors.grey))
                       ),
                       Divider(height: 1, color: Colors.grey, indent: size.width * 0.025, endIndent: size.width * 0.025),
                       ListTile(onTap: () {}, dense: true,
-                          title: Text('생년월일', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
+                          title: Text('birthday', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
                           subtitle: Text(userInfo[2]!, style: TextStyle(color: Colors.grey))
           ),
                     ],

@@ -209,7 +209,7 @@ class _ProFilePageState extends State<ProFilePage> {
                             padding: EdgeInsets.all(size.width * 0.05),
                             child: CircleAvatar(
                               radius: size.width * 0.2, backgroundImage: _image != null
-                                ? FileImage(  File(_image!.path))
+                                ? FileImage(File(_image!.path))
                                 : const AssetImage('hanni.jpeg')
                                   as ImageProvider,
                             ),

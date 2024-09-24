@@ -79,9 +79,20 @@ class ootdBody extends StatelessWidget {
           ),
           Container(
             margin: EdgeInsets.fromLTRB(20, 15, 20, 15),
-            height: 600,
-            width: 450,
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.grey),
+            height: 480,
+            width: 400,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: Color(0xffebebeb),
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0xff000000).withOpacity(0.25),
+                  spreadRadius: 0,
+                  blurRadius: 10,
+                  offset: Offset(0, 4), // changes position of shadow
+                ),
+              ],
+            ),
           ),
           Row(
             children: [
@@ -89,7 +100,18 @@ class ootdBody extends StatelessWidget {
                 margin: EdgeInsets.fromLTRB(25, 0, 25, 0),
                 height: 100,
                 width: 100,
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.grey),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: Color(0xffebebeb),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0xff000000).withOpacity(0.25),
+                      spreadRadius: 0,
+                      blurRadius: 4,
+                      offset: Offset(0, 4), // changes position of shadow
+                    ),
+                  ],
+                ),
               ),
               Container(
                 height: 100,

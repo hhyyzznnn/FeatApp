@@ -121,7 +121,7 @@ class _HomePageState extends State<HomePage> {
               height: size.height * 0.6,
               child: PageView.builder(
                 controller: PageController(viewportFraction: 0.8),
-                itemCount: 5,
+                itemCount: 50,
                 itemBuilder: (context, index) {
                   return Container(
                     margin: EdgeInsets.only(right: 28), // 좌우 여백 설정
@@ -174,7 +174,7 @@ class _HomePageState extends State<HomePage> {
                         shape: const CircleBorder(),
                         padding: EdgeInsets.all(size.width * 0.1),
                         side:
-                            const BorderSide(color: Colors.white, width: 7.5)),
+                            const BorderSide(color: Colors.white, width: 5)),
                     onPressed: () {
                       Navigator.pushNamed(context, 'camera');
                     },

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
@@ -5,6 +6,7 @@ import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:feat/screens/signin.dart';
+import 'package:http/http.dart' as http;
 
 class ProFilePage extends StatefulWidget {
   const ProFilePage({super.key});
@@ -16,6 +18,31 @@ class ProFilePage extends StatefulWidget {
 class _ProFilePageState extends State<ProFilePage> {
   XFile? _image;
   final ImagePicker picker = ImagePicker();
+
+  final String userId = "user1";
+
+  Future<void> loadSettings() async {
+
+    final url = Uri.parse('http://localhost:8080/load/'); // 서버 주소 추가
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"userId": userId}),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          Setting = ; // JSON 데이터 가져오기
+          print(Setting);
+        });
+      } else {
+        throw Exception('Failed to load setttings');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 
   @override
   Future<void> deleteUserId() async {

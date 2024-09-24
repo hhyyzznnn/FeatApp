@@ -83,7 +83,7 @@ class AlarmBox extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(100.0),
-              child: Image.asset('hanni.jpeg', width: 50, height: 50,),
+              child: Icon(Icons.circle, color: Color(0xffebebeb), size: 60 ),
 
             ),
             SizedBox(

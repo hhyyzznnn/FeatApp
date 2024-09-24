@@ -85,22 +85,22 @@ class AlarmBox extends StatelessWidget {
               child: Image.asset('hanni.jpeg', width: 50, height: 50,),
 
             ),
-            Container(
+            SizedBox(
                 width: 100,
                 height: 90,
                 child: Column(
                   children: [
                     Align(
+                      alignment: Alignment.topLeft,
                       child:Container(
                           margin: EdgeInsets.fromLTRB(20, 22, 0, 0),
                           child: Text('username', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white))),
-                      alignment: Alignment.topLeft,
                     ),
                     Align(
+                      alignment: Alignment.topLeft,
                       child: Container(
                           margin: EdgeInsets.fromLTRB(20, 0, 0, 0),
                           child: Text('내용', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.white))),
-                      alignment: Alignment.topLeft,
                     )
                   ],
                 )

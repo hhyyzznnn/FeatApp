@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'appbar.dart';
 
 class ootdHomePage extends StatelessWidget {
   ootdHomePage({Key? key, this.year, this.month, this.day}) : super(key:key);
@@ -10,9 +9,46 @@ class ootdHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final size = MediaQuery.of(context).size;
+
     return MaterialApp(
       home: Scaffold(
-        appBar: PreferredSize(child: MainAppBar(), preferredSize: Size.fromHeight(200)),
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.white,
+          title: Text('Feat.',
+              style: TextStyle(
+                  fontSize: size.height * 0.035,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87)),
+          actions: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: size.width * 0.025),
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                constraints: BoxConstraints(),
+                onPressed: () {
+                  Navigator.pushNamed(context, 'alarm');
+                },
+                icon: Icon(Icons.notifications_none, size: size.height * 0.035),
+                color: Colors.black87,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(right: size.width * 0.025),
+              child: InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, 'profile');
+                },
+                borderRadius: BorderRadius.circular(size.height * 0.02),
+                child: ClipOval(
+                  child: Icon(Icons.person, size: size.height * 0.035),
+                ),
+              ),
+            )
+          ],
+        ),
         body: ootdBody(year: year, month: month, day: day),
       ),
     );

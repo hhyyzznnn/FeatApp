@@ -1,5 +1,7 @@
+import 'package:feat/screens/appbar2.dart';
 import 'package:feat/screens/home.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
@@ -17,22 +19,7 @@ class _AlarmPageState extends State<AlarmPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        centerTitle: false,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.push(context,
-              MaterialPageRoute(
-                builder: (BuildContext context) => HomePage(),
-              ),
-            );
-          },
-          icon: Icon(Icons.arrow_back),
-        ),
-        title: Text('알림', style: TextStyle(),),
-        surfaceTintColor: Colors.transparent,
-      ),
+      appBar: PreferredSize(preferredSize: Size.fromHeight(200), child: appbar2()),
       body: Container(
         color: Colors.white,
         child: ListView(

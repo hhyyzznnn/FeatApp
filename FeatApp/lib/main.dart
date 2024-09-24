@@ -10,6 +10,8 @@ import 'screens/appbar.dart';
 import 'screens/calender.dart';
 import 'screens/friendpage.dart';
 import 'screens/ootd.dart';
+import 'screens/appbar2.dart';
+
 
 void main() {
   runApp(const FeatApp());
@@ -50,6 +52,7 @@ class FeatApp extends StatelessWidget {
         'calender' : (context) => Calender(),
         'friendpage' : (context) => FriendPage(),
         'ootd' : (context) => ootdHomePage(),
+        'appbar2' : (context) => appbar2()
       }
     );
   }

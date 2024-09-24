@@ -38,6 +38,8 @@ dependencies:
   camera:
   path_provider:
   shared_preferences: ^2.0.6
+  flutter_screenutil: ^5.8.4
+
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:feat/screens/calender.dart';
-import 'package:feat/screens/home.dart';
 import 'package:feat/utils/appbar.dart';
 
 class FriendPage extends StatefulWidget {

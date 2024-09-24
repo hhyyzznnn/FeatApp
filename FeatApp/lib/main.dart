@@ -6,6 +6,9 @@ import 'screens/signup.dart';
 import 'screens/signin.dart';
 import 'screens/camera.dart';
 import 'screens/alarm.dart';
+import 'screens/calender.dart';
+import 'screens/friendpage.dart';
+import 'screens/ootd.dart';
 
 void main() {
   runApp(const FeatApp());
@@ -41,6 +44,10 @@ class FeatApp extends StatelessWidget {
         'signin': (context) => SignInPage(),
         'camera': (context) => CameraPage(),
         'alarm' : (context) => AlarmPage(),
+        'home' : (context) => HomePage(),
+        'calender' : (context) => CalenderPage(),
+        'friendpage' : (context) => FriendPage(),
+        'ootd' : (context) => ootdHomePage(),
       }
     );
   }

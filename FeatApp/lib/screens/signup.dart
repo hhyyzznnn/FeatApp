@@ -1,4 +1,3 @@
-import 'package:feat/screens/home.dart';
 import 'package:feat/screens/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -243,12 +242,17 @@ class _SignState extends State<Sign> {
                     setState(() {
                       isFieldTouched = true; // 필드가 터치되었음을 표시
                     });
-                    if (_formKey.currentState!.validate()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('회원가입이 성공적으로 완료되었습니다.')),
-                      );
+                    //if (_formKey.currentState!.validate()) {
+                      //ScaffoldMessenger.of(context).showSnackBar(
+                        //SnackBar(content: Text('회원가입이 성공적으로 완료되었습니다.')),
+                      //);
                       // 추가 로직 (예: 서버에 데이터 전송)
-                    }
+                    //}
+                    Navigator.push(context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => Login(),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,

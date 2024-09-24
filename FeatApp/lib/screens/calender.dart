@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'ootd.dart';
+import 'package:feat/utils/appbar.dart';
 
-class Calender extends StatelessWidget {
-  Calender({super.key});
+class CalenderPage extends StatelessWidget {
+  CalenderPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    final size = MediaQuery.of(context).size;
+
     return MaterialApp(
       home: Scaffold(
-          appBar: PreferredSize(
-              preferredSize: Size.fromHeight(100),
-              child: CalenderAppBar()
-          ),
+          appBar: buildAppBar(context, '달력'),
           body: Container(
               color: Colors.white,
               child: CalenderHomePage()
@@ -21,40 +22,8 @@ class Calender extends StatelessWidget {
   }
 }
 
-class CalenderAppBar extends StatelessWidget {
-  const CalenderAppBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: SafeArea(
-        child: Row(
-          children: [
-            Container(
-                margin: EdgeInsets.fromLTRB(20, 30, 10, 30),
-                child: IconButton(onPressed: (){}, icon: Icon(Icons.arrow_back_rounded), iconSize: 27)
-            ),
-            Container(
-                margin:EdgeInsets.fromLTRB(10, 30, 7, 30),
-                child: Text(
-                  '달력',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 25),
-                )
-            ),
-            Container(
-                margin: EdgeInsets.fromLTRB(7, 30, 10, 30),
-                child: IconButton(onPressed: (){}, icon: Icon(Icons.star_border_purple500_outlined), iconSize: 27)
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class CalenderDate extends StatefulWidget {
-  CalenderDate({Key? key, this.day, this.year, this.month}) : super(key:key);
+  CalenderDate({super.key, this.day, this.year, this.month});
 
   final now = DateTime.now;
   var day;
@@ -109,13 +78,13 @@ class _CalenderDate extends State<CalenderDate> {
         },
         child: Container(
             width: 50, height: 50,
+            margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.white),
             child: Align
               (
                 child: Text(widget.day.toString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
                 alignment: Alignment.center
-            ),
-            margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.white)
+            )
         ),
       );
     }
@@ -124,7 +93,7 @@ class _CalenderDate extends State<CalenderDate> {
 
 
 class CalenderHomePage extends StatefulWidget {
-  CalenderHomePage({Key ? key}) : super(key:key);
+  CalenderHomePage({super.key});
 
   final now = DateTime.now();
   var startYear = 2024;
@@ -192,12 +161,12 @@ class _CalenderHomePageState extends State<CalenderHomePage> {
         itemBuilder: (context, index){
           return Column(children: [
             Align(
+                alignment: Alignment.topLeft,
                 child: Container(
                   child: Text(yearAndMonth(index, widget.startYear, widget.startMonth)[0].toString() + '__' + yearAndMonth(index, widget.startYear, widget.startMonth)[1].toString() , style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600)),
                   margin: EdgeInsets.fromLTRB(20, 30, 0, 10),
                   decoration: BoxDecoration(color: Colors.white),
-                ),
-                alignment: Alignment.topLeft
+                )
             ),
             SizedBox(child: CalendarBar(), width: 450, height: 70),
             SizedBox(child: CalendarDateGridView(index: index), width: 450, height: 340)

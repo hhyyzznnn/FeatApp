@@ -102,9 +102,18 @@ class _HomePageState extends State<HomePage> {
                   Container(
                       height: size.height * 0.06,
                       decoration: BoxDecoration(
-                          borderRadius:
-                              BorderRadius.circular(size.width * 0.03),
-                          color: Colors.black87))
+                        borderRadius:
+                          BorderRadius.circular(size.width * 0.03), color: Color(0xff3f3f3f),
+                        boxShadow: [
+                          BoxShadow(
+                              color: Color(0xff000000).withOpacity(0.25),
+                              spreadRadius: 0,
+                              blurRadius: 4,
+                              offset: Offset(0, 4) // changes position of shadow
+                          ),
+                        ],
+                      )
+                  )
                 ],
               ),
             ),
@@ -112,19 +121,22 @@ class _HomePageState extends State<HomePage> {
               height: size.height * 0.6,
               child: PageView.builder(
                 controller: PageController(viewportFraction: 0.8),
-                itemCount: homePosts.length,
+                itemCount: 5,
                 itemBuilder: (context, index) {
-                  final imageUrl = homePosts[index];
-
                   return Container(
-                    width: size.width, // 너비 설정
-                    height: size.height * 0.6, // 높이 설정
-                    child: imageUrl != null
-                        ? Image.network(
-                            imageUrl,
-                            fit: BoxFit.cover, // 이미지가 컨테이너에 맞게 조정됨
-                          )
-                        : Center(child: Text('No Image')), // 이미지가 없을 때
+                    margin: EdgeInsets.only(right: 28), // 좌우 여백 설정
+                    decoration: BoxDecoration(
+                      color: Color(0xffebebeb),
+                      borderRadius: BorderRadius.circular(10), // 모서리를 둥글게 설정
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0xff000000).withOpacity(0.25),
+                          spreadRadius: 0,
+                          blurRadius: 10,
+                          offset: Offset(0, 4) // changes position of shadow
+                        ),
+                      ],
+                    ),
                   );
                 },
               ),
@@ -135,7 +147,7 @@ class _HomePageState extends State<HomePage> {
                 Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(30.0),
-                        color: Colors.black87),
+                        color: Color(0xff3f3f3f)),
                     margin: EdgeInsets.all(size.width * 0.05),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -158,7 +170,7 @@ class _HomePageState extends State<HomePage> {
                     )),
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black87.withOpacity(1),
+                        backgroundColor: Color(0xff3f3f3f).withOpacity(1),
                         shape: const CircleBorder(),
                         padding: EdgeInsets.all(size.width * 0.1),
                         side:

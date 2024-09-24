@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(
                   fontSize: size.height * 0.035,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87)),
+                  color: Color(0xff3F3F3F))),
           actions: [
             Padding(
               padding: EdgeInsets.symmetric(horizontal: size.width * 0.025),
@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.pushNamed(context, 'alarm');
                 },
                 icon: Icon(Icons.notifications_none, size: size.height * 0.035),
-                color: Colors.black87,
+                color: Color(0xff3F3F3F),
               ),
             ),
             Padding(
@@ -104,7 +104,7 @@ class _HomePageState extends State<HomePage> {
                       decoration: BoxDecoration(
                           borderRadius:
                               BorderRadius.circular(size.width * 0.03),
-                          color: Colors.black87))
+                          color: Color(0xff3F3F3F)))
                 ],
               ),
             ),
@@ -135,7 +135,7 @@ class _HomePageState extends State<HomePage> {
                 Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(30.0),
-                        color: Colors.black87),
+                        color: Color(0xff3F3F3F)),
                     margin: EdgeInsets.all(size.width * 0.05),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -158,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                     )),
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black87.withOpacity(1),
+                        backgroundColor: Color(0xff3F3F3F).withOpacity(1),
                         shape: const CircleBorder(),
                         padding: EdgeInsets.all(size.width * 0.1),
                         side:

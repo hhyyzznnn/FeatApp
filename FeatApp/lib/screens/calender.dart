@@ -23,7 +23,7 @@ class CalenderPage extends StatelessWidget {
 }
 
 class CalenderDate extends StatefulWidget {
-  CalenderDate({Key? key, this.day, this.year, this.month}) : super(key:key);
+  CalenderDate({super.key, this.day, this.year, this.month});
 
   final now = DateTime.now;
   var day;
@@ -78,13 +78,13 @@ class _CalenderDate extends State<CalenderDate> {
         },
         child: Container(
             width: 50, height: 50,
+            margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.white),
             child: Align
               (
                 child: Text(widget.day.toString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
                 alignment: Alignment.center
-            ),
-            margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.white)
+            )
         ),
       );
     }
@@ -93,7 +93,7 @@ class _CalenderDate extends State<CalenderDate> {
 
 
 class CalenderHomePage extends StatefulWidget {
-  CalenderHomePage({Key ? key}) : super(key:key);
+  CalenderHomePage({super.key});
 
   final now = DateTime.now();
   var startYear = 2024;

@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(
                   fontSize: size.height * 0.035,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87)),
+                  color: Color(0xff3F3F3F))),
           actions: [
             Padding(
               padding: EdgeInsets.symmetric(horizontal: size.width * 0.025),
@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.pushNamed(context, 'alarm');
                 },
                 icon: Icon(Icons.notifications_none, size: size.height * 0.035),
-                color: Colors.black87,
+                color: Color(0xff3F3F3F),
               ),
             ),
             Padding(
@@ -123,20 +123,26 @@ class _HomePageState extends State<HomePage> {
                 controller: PageController(viewportFraction: 0.8),
                 itemCount: 50,
                 itemBuilder: (context, index) {
+                  final imageUrl = homePosts[index];
                   return Container(
                     margin: EdgeInsets.only(right: 28), // 좌우 여백 설정
                     decoration: BoxDecoration(
-                      color: Color(0xffebebeb),
                       borderRadius: BorderRadius.circular(10), // 모서리를 둥글게 설정
                       boxShadow: [
                         BoxShadow(
                           color: Color(0xff000000).withOpacity(0.25),
                           spreadRadius: 0,
                           blurRadius: 10,
-                          offset: Offset(0, 4) // changes position of shadow
+                          offset: Offset(0, 4)
                         ),
                       ],
                     ),
+                    child: imageUrl != null
+                    ? Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover, // 이미지가 컨테이너에 맞게 조정됨
+                  )
+                      : Center(child: Text('No Image')), // 이미지가 없을 때,
                   );
                 },
               ),

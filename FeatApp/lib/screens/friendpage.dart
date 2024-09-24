@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:feat/utils/appbar.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class FriendPage extends StatefulWidget {
   const FriendPage({super.key});
@@ -9,6 +11,33 @@ class FriendPage extends StatefulWidget {
 }
 
 class _FriendPageState extends State<FriendPage> {
+  List<String?>Friends = [];
+
+  final String userId = "user1";
+
+  Future<void> loadFriends() async {
+    final url = Uri.parse('http://localhost:8080/load/'); // 친구 서버 주소 추가
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"userId": userId}),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          Friends = List<String?>.from(
+              jsonDecode(response.body)); // JSON 데이터를 리스트로 변환
+          print(Friends);
+        });
+      } else {
+        throw Exception('Failed to friends list');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -27,34 +56,6 @@ class _FriendPageState extends State<FriendPage> {
                 )
               ]
           )
-      ),
-    );
-  }
-}
-
-class FriendPageAppBar extends StatelessWidget {
-  const FriendPageAppBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: SafeArea(
-        child: Row(
-          children: [
-            Container(
-                margin: EdgeInsets.fromLTRB(20, 30, 10, 30),
-                child: IconButton(onPressed: (){}, icon: Icon(Icons.arrow_back_rounded), iconSize: 27)
-            ),
-            Container(
-                margin:EdgeInsets.fromLTRB(10, 30, 7, 30),
-                child: Text(
-                  '친구',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 25),
-                )
-            )
-          ],
-        ),
       ),
     );
   }
@@ -134,16 +135,16 @@ class _friendComponentState extends State<friendComponent> {
                 child: Column(
                   children: [
                     Align(
+                      alignment: Alignment.topLeft,
                       child:Container(
                           margin: EdgeInsets.fromLTRB(10, 20, 0, 0),
                           child: Text('친구1', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500))),
-                      alignment: Alignment.topLeft,
                     ),
                     Align(
+                      alignment: Alignment.topLeft,
                       child: Container(
                           margin: EdgeInsets.fromLTRB(12, 0, 0, 0),
                           child: Text('ID', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500))),
-                      alignment: Alignment.topLeft,
                     )
                   ],
                 )

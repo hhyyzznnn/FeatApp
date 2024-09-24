@@ -61,7 +61,7 @@ class AlarmBox extends StatelessWidget {
         Navigator.pushNamed(context, 'calendar');
       },
       child: Container(
-        margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
+        margin: EdgeInsets.fromLTRB(25, 10, 20, 10),
         padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
         width: 200,
         height: 90,

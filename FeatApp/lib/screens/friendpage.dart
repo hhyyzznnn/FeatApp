@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:feat/screens/calender.dart';
 import 'package:feat/screens/home.dart';
+import 'package:feat/utils/appbar.dart';
 
 class FriendPage extends StatefulWidget {
   const FriendPage({super.key});
@@ -14,7 +15,7 @@ class _FriendPageState extends State<FriendPage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-          appBar: PreferredSize(child: FriendPageAppBar(), preferredSize: Size.fromHeight(200)),
+          appBar: buildAppBar(context, '친구'),
           body: Column(
               children: [
                 Search(),
@@ -32,7 +33,6 @@ class _FriendPageState extends State<FriendPage> {
     );
   }
 }
-
 
 class FriendPageAppBar extends StatelessWidget {
   const FriendPageAppBar({super.key});

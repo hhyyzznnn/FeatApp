@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:feat/screens/signin.dart';
 import 'package:http/http.dart' as http;
+import 'package:feat/utils/appbar.dart';
 
 class ProFilePage extends StatefulWidget {
   const ProFilePage({super.key});
@@ -33,8 +34,8 @@ class _ProFilePageState extends State<ProFilePage> {
 
       if (response.statusCode == 200) {
         setState(() {
-          Setting = ; // JSON 데이터 가져오기
-          print(Setting);
+          // Setting = ; // JSON 데이터 가져오기
+          // print(Setting);
         });
       } else {
         throw Exception('Failed to load setttings');
@@ -124,6 +125,7 @@ class _ProFilePageState extends State<ProFilePage> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+        appBar: buildAppBar(context, '프로필'),
         body: SingleChildScrollView(
           child: Container(
             padding: EdgeInsets.fromLTRB(
@@ -136,18 +138,6 @@ class _ProFilePageState extends State<ProFilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    IconButton(padding: EdgeInsets.zero, constraints: BoxConstraints(), onPressed: (){
-                      Navigator.pop(context);
-                    }, icon: Icon(Icons.arrow_back, size: size.width * 0.075), color: Colors.black87),
-                    Padding(
-                      padding: EdgeInsets.all(size.width * 0.015),
-                      child: Text('프로필', style: TextStyle(fontWeight: FontWeight.bold, fontSize: size.width * 0.065)),
-                    )
-                  ],
-                ),
                 Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),

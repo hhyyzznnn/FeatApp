@@ -1,11 +1,5 @@
-import 'package:feat/screens/appbar2.dart';
-import 'package:feat/screens/home.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:feat/utils/appbar.dart';
 
 class AlarmPage extends StatefulWidget {
   const AlarmPage({super.key});
@@ -19,7 +13,7 @@ class _AlarmPageState extends State<AlarmPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(preferredSize: Size.fromHeight(200), child: appbar2()),
+      appBar: buildAppBar(context, '알람'),
       body: Container(
         color: Colors.white,
         child: ListView(

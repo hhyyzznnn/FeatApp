@@ -1,59 +1,22 @@
 import 'package:flutter/material.dart';
 import 'ootd.dart';
+import 'package:feat/utils/appbar.dart';
 
 class CalenderPage extends StatelessWidget {
   CalenderPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+
     final size = MediaQuery.of(context).size;
+
     return MaterialApp(
       home: Scaffold(
-          appBar: AppBar(
-              backgroundColor: Colors.white,
-              leading: IconButton(onPressed: () {
-                Navigator.pop(context);
-                }, icon: Icon(Icons.arrow_back_rounded), iconSize: size.width * 0.075),
-              title: Text('달력')),
+          appBar: buildAppBar(context, '달력'),
           body: Container(
               color: Colors.white,
               child: CalenderHomePage()
           )
-      ),
-    );
-  }
-}
-
-class CalenderAppBar extends StatelessWidget {
-  const CalenderAppBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    return Container(
-      color: Colors.white,
-      child: SafeArea(
-        child: Row(
-          children: [
-            Container(
-                margin: EdgeInsets.fromLTRB(20, 30, 10, 30),
-                child: IconButton(onPressed: () {
-                  Navigator.pop(context);
-                }, icon: Icon(Icons.arrow_back_rounded), iconSize: size.width * 0.075)
-            ),
-            Container(
-                margin:EdgeInsets.fromLTRB(10, 30, 7, 30),
-                child: Text(
-                  '달력',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 25),
-                )
-            ),
-            Container(
-                margin: EdgeInsets.fromLTRB(7, 30, 10, 30),
-                child: IconButton(onPressed: (){}, icon: Icon(Icons.star_border_purple500_outlined), iconSize: 27)
-            )
-          ],
-        ),
       ),
     );
   }

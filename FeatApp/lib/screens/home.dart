@@ -123,20 +123,26 @@ class _HomePageState extends State<HomePage> {
                 controller: PageController(viewportFraction: 0.8),
                 itemCount: 5,
                 itemBuilder: (context, index) {
+                  final imageUrl = homePosts[index];
                   return Container(
                     margin: EdgeInsets.only(right: 28), // 좌우 여백 설정
                     decoration: BoxDecoration(
-                      color: Color(0xffebebeb),
                       borderRadius: BorderRadius.circular(10), // 모서리를 둥글게 설정
                       boxShadow: [
                         BoxShadow(
                           color: Color(0xff000000).withOpacity(0.25),
                           spreadRadius: 0,
                           blurRadius: 10,
-                          offset: Offset(0, 4) // changes position of shadow
+                          offset: Offset(0, 4)
                         ),
                       ],
                     ),
+                    child: imageUrl != null
+                    ? Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover, // 이미지가 컨테이너에 맞게 조정됨
+                  )
+                      : Center(child: Text('No Image')), // 이미지가 없을 때,
                   );
                 },
               ),

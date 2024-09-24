@@ -49,7 +49,7 @@ class FeatApp extends StatelessWidget {
         'alarm' : (context) => AlarmPage(),
         'home' : (context) => HomePage(),
         'appbar' : (context) => MainAppBar(),
-        'calender' : (context) => Calender(),
+        'calender' : (context) => CalenderPage(),
         'friendpage' : (context) => FriendPage(),
         'ootd' : (context) => ootdHomePage(),
         'appbar2' : (context) => appbar2()

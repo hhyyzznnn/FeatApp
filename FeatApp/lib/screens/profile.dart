@@ -8,6 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:feat/screens/signin.dart';
 import 'package:http/http.dart' as http;
 import 'package:feat/utils/appbar.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
 
 class ProFilePage extends StatefulWidget {
   const ProFilePage({super.key});
@@ -17,18 +19,17 @@ class ProFilePage extends StatefulWidget {
 }
 
 class _ProFilePageState extends State<ProFilePage> {
-  XFile? _image;
+  File? _image;
   final ImagePicker picker = ImagePicker();
 
-  List<String?> userSetting = []; // 유저 설정을 저장할 리스트
-  List<String?> userInfo = []; // 유저 정보를 저장할 리스트
+  Map userSetting = {}; // 유저 세팅을 저장할 맵
+  Map userInfo = {}; // 유저 정보를 저장할 리스트
 
-
-  final String userId = "user1";
+  final String userId = "user1"; // 임의로 작성한 유저 아이디
 
   Future<void> loadSettings() async {
 
-    final url = Uri.parse('http://localhost:8080/load/'); // 설정 서버 주소 추가
+    final url = Uri.parse('http://localhost:8080/load/alarmSetting'); // 설정 서버 주소 추가
     try {
       final response = await http.post(
         url,
@@ -38,11 +39,11 @@ class _ProFilePageState extends State<ProFilePage> {
 
       if (response.statusCode == 200) {
         setState(() {
-          userSetting = List<String?>.from(jsonDecode(response.body));
+          userSetting = Map.from(jsonDecode(response.body));
 
-          reqNotifications = userSetting[0] == 'true';
-          friNotifications = userSetting[1] == 'true';
-          allNotifications = userSetting[2] == 'true';
+          reqNotifications = userSetting['friendRequest'] == 'on';
+          friNotifications = userSetting['friendAlarm'] == 'on';
+          allNotifications = userSetting['entireAlarm'] == 'on';
           print(userSetting);
         });
       } else {
@@ -51,11 +52,11 @@ class _ProFilePageState extends State<ProFilePage> {
     } catch (e) {
       print('Error: $e');
     }
-  }
+  } // 유저 설정 불러오는 함수(서버)
 
   Future<void> loadInfo() async {
 
-    final url = Uri.parse('http://localhost:8080/load/'); // 유저 정보 서버 주소 추가
+    final url = Uri.parse('http://localhost:8080/load/userInfo'); // 유저 정보 서버 주소 추가
     try {
       final response = await http.post(
         url,
@@ -65,7 +66,7 @@ class _ProFilePageState extends State<ProFilePage> {
 
       if (response.statusCode == 200) {
         setState(() {
-          userInfo = List<String?>.from(jsonDecode(response.body)); // JSON 데이터를 리스트로 변환
+          userInfo = Map.from(jsonDecode(response.body)); // JSON 데이터를 리스트로 변환
           print(userInfo);
         });
       } else {
@@ -74,17 +75,47 @@ class _ProFilePageState extends State<ProFilePage> {
     } catch (e) {
       print('Error: $e');
     }
-  }
+  } // 유저 정보 불러오는 함수 (서버)
 
-  Future<void> deleteUserId() async {
+  Future<void> deleteUserId(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('userId');
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => SignInPage())
     );
-  }
+  } // 로그아웃 함수
 
+  Future<void> deleteAccount(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('userId');
+
+    if (userId != null) {
+      final url = Uri.parse('http://'); // 계정 삭제 기능이 구현된 서버 주소
+      try {
+        final response = await http.post(
+          url,
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode({"userId": userId}),
+        );
+
+        if (response.statusCode == 200) {
+          await prefs.remove('userId');
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => SignInPage()),
+          );
+        } else {
+          throw Exception('Failed to delete account');
+        }
+      } catch (e) {
+        print('Error: $e');
+      }
+    }
+  } // 계정 삭제 함수
+
+  @override
   void initState() {
     super.initState();
     requestPermissions();
@@ -95,14 +126,25 @@ class _ProFilePageState extends State<ProFilePage> {
   Future<void> requestPermissions() async {
     final camStatus = await Permission.camera.request();
     final phoStatus = await Permission.photos.request();
-  }
+  } // 카메라, 갤러리 권한 (미사용)
 
   Future<void> pickImage(ImageSource source) async {
     final pickedFile = await picker.pickImage(source: source);
     if (pickedFile != null) {
       setState(() {
-        _image = pickedFile;
+        _image = File(pickedFile.path);
       });
+
+      String fileName = pickedFile.path.split('/').last;
+      print('File name: $fileName');
+
+      String? uploadUrl = await getUploadUrl(userId, fileName);
+
+      if (uploadUrl != null) {
+        await uploadImageToUrl(uploadUrl, _image!);
+      } else {
+        print('Failed to retrieve upload URL.');
+      }
     }
   }
 
@@ -127,54 +169,130 @@ class _ProFilePageState extends State<ProFilePage> {
         ],
       ));
     });
-  }
+  } // 사진 촬영 or 갤러리 선택
 
   bool reqNotifications = false;
   bool friNotifications = false;
   bool allNotifications = false; // 서버 연결 후 코드 삭제할 예정
 
-  Future<void> updateNotificationStatus(String type, bool value) async {
-    final url = Uri.parse('http://localhost:8080/load/');  // 유저 설정 서버 주소 추가
-
-    try {
-      final response = await http.post(
-        url,
-        body: {
-          'type': type,            // 알림 유형 (req, fri, all 등)
-          'status': value.toString(),  // 알림 상태 (true/false)
-        },
-      );
-
-      if (response.statusCode == 200) {
-        print('Notification updated successfully');
-      } else {
-        print('Failed to update notification: ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Error updating notification: $error');
-    }
-  }
-
   void toggleReqNotifications(bool? value) {
     setState(() {
       reqNotifications = value ?? false;
     });
-    updateNotificationStatus('req', reqNotifications);  // 서버로 상태 전송
   }
-
   void toggleFriNotifications(bool? value) {
     setState(() {
       friNotifications = value ?? false;
     });
-    updateNotificationStatus('fri', friNotifications);  // 서버로 상태 전송
   }
-
   void toggleAllNotifications(bool? value) {
     setState(() {
       allNotifications = value ?? false;
     });
-    updateNotificationStatus('all', allNotifications);  // 서버로 상태 전송
   }
+
+  Future<String?> getUploadUrl(String userId, String fileName) async {
+    final url = Uri.parse('http://localhost:8080/upload/profile');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"userId": userId, "fileName": fileName}),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        return responseData;
+      } else {
+        print('Failed to get upload URL: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error: $e');
+      return null;
+    }
+  }
+
+  Future<void> uploadImageToUrl(String uploadUrl, File image) async {
+    final mimeTypeData = lookupMimeType(image.path, headerBytes: [0xFF, 0xD8])?.split('/');
+
+    try {
+      final request = http.MultipartRequest('PUT', Uri.parse(uploadUrl));
+
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'file',
+          image.path,
+          contentType: MediaType(mimeTypeData![0], mimeTypeData[1]), // MIME 타입 설정
+        ),
+      );
+
+      final response = await request.send();
+
+      if (response.statusCode == 200) {
+        print('Image uploaded successfully.');
+      } else {
+        print('Failed to upload image: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  void logoutConfirm(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('로그아웃'),
+          content: const Text('정말 로그아웃하시겠습니까?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('취소'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('확인'),
+              onPressed: () {
+                deleteUserId(context);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  } // 로그아웃 확인
+
+  void deleteAccountConfirm(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('계정 삭제'),
+          content: const Text('정말 계정을 삭제하시겠습니까?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('취소'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('확인'),
+              onPressed: () {
+                deleteAccount(context);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  } // 계정 삭제 확인
 
   @override
   Widget build(BuildContext context) {
@@ -209,9 +327,8 @@ class _ProFilePageState extends State<ProFilePage> {
                             padding: EdgeInsets.all(size.width * 0.05),
                             child: CircleAvatar(
                               radius: size.width * 0.2, backgroundImage: _image != null
-                                ? FileImage(File(_image!.path))
-                                : const AssetImage('hanni.jpeg')
-                                  as ImageProvider,
+                                ? FileImage(_image!)
+                                : const AssetImage('hanni.jpeg') as ImageProvider,
                             ),
                           ),
                           Padding(
@@ -242,7 +359,7 @@ class _ProFilePageState extends State<ProFilePage> {
                   child: Column(
                     children: [
                       ListTile(
-                        leading: Icon(Icons.group, color: Colors.white,),
+                        leading: Icon(Icons.group, color: Colors.white),
                         title: Text('친구 요청', style: TextStyle(color: Colors.white)),
                         trailing: CupertinoSwitch(
                           value: reqNotifications,
@@ -284,17 +401,17 @@ class _ProFilePageState extends State<ProFilePage> {
                     children: [
                       ListTile(onTap: () {}, dense: true,
                         title: Text('이메일', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
-                        subtitle: Text(userInfo[0]!, style: TextStyle(color: Colors.grey))
+                        subtitle: Text(userInfo['userEmail'], style: TextStyle(color: Colors.grey))
                       ),
                       Divider(height: 1,color: Colors.grey, indent: size.width * 0.025, endIndent: size.width * 0.025),
                       ListTile(onTap: () {}, dense: true,
                           title: Text('전화번호', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
-                          subtitle: Text(userInfo[1]!, style: TextStyle(color: Colors.grey))
+                          subtitle: Text(userInfo['userPhone'], style: TextStyle(color: Colors.grey))
                       ),
                       Divider(height: 1, color: Colors.grey, indent: size.width * 0.025, endIndent: size.width * 0.025),
                       ListTile(onTap: () {}, dense: true,
                           title: Text('생년월일', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
-                          subtitle: Text(userInfo[2]!, style: TextStyle(color: Colors.grey))
+                          subtitle: Text(userInfo['birthday'], style: TextStyle(color: Colors.grey))
           ),
                     ],
                   ),
@@ -306,12 +423,13 @@ class _ProFilePageState extends State<ProFilePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(onPressed: () {
-                      deleteUserId(); // 정말 로그아웃하시겠습니까? 등 팝업창 추가해야함. 지금은 유저아이디 즉시 삭제.
-                    }, style: ElevatedButton.styleFrom(
+                        logoutConfirm(context);
+                      }, style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), backgroundColor: Color(0xff3f3f3f),
                         minimumSize: Size(size.width * 0.45, size.height * 0.075), alignment: Alignment.center),
                         child: Text('계정 삭제', style: TextStyle(color: Colors.white),)),
                     ElevatedButton(onPressed: () {
+                      deleteAccountConfirm(context);
                     }, style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), backgroundColor: Color(0xff3f3f3f),
                         minimumSize: Size(size.width * 0.45, size.height * 0.075), alignment: Alignment.center),

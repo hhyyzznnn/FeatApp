@@ -84,7 +84,7 @@ class _SearchState extends State<Search> {
                 margin: EdgeInsets.fromLTRB(10, 0, 20, 0),
                 child: Icon(Icons.search, color: Colors.white70)
             ),
-            Container(
+            SizedBox(
               width: 300,
               height: 70,
               child: TextField(
@@ -129,7 +129,7 @@ class _friendComponentState extends State<friendComponent> {
               height: 100,
               decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.blue),
             ),
-            Container(
+            SizedBox(
                 width: 200,
                 height: 100,
                 child: Column(

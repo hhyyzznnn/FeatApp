@@ -38,8 +38,9 @@ dependencies:
   camera:
   path_provider:
   audioplayers: ^6.1.0
-  shared_preferences: ^2.0.6
   flutter_screenutil: ^5.8.4
+  mime:
+  http_parser:
 
 
 

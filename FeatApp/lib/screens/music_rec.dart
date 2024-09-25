@@ -17,8 +17,8 @@ class MusicRecScreen extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     final cWidth = size.width * 0.92;
     final cHeight = cWidth * 16 / 9;
-    final widgetWidth = 60.0; // 위젯의 가로 크기
-    final widgetHeight = 60.0; // 위젯의 세로 크기
+    const widgetWidth = 60.0; // 위젯의 가로 크기
+    const widgetHeight = 60.0; // 위젯의 세로 크기
 
     return Scaffold(
       body: Stack(
@@ -39,7 +39,7 @@ class MusicRecScreen extends StatelessWidget {
           ),
           Align(
             alignment: Alignment(0, 0.65),
-            child: Container(
+            child: SizedBox(
               width: cWidth * 0.65,
               height: cHeight * 0.2,
               child: Row(
@@ -135,7 +135,7 @@ class MusicRecScreen extends StatelessWidget {
           // Music List
           Align(
             alignment: Alignment(0, -0.36),
-            child: Container(
+            child: SizedBox(
               width: size.width * 0.88,
               height: size.height * 0.3, // 리스트가 표시될 높이 조정
               child: ListView.builder(

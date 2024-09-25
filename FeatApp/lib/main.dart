@@ -21,7 +21,7 @@ class FeatApp extends StatelessWidget {
     final prefs = await SharedPreferences.getInstance();
     String? userId = prefs.getString('userId');
     return userId == null; // '=='를 '!='로 수정해야 함. 코딩 위해서 임의로 바꿔놓음
-  }
+  } // 로그인 여부 확인
 
   @override
   Widget build(BuildContext context) {

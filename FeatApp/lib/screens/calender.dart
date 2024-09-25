@@ -8,8 +8,6 @@ class CalenderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final size = MediaQuery.of(context).size;
-
     return MaterialApp(
       home: Scaffold(
           appBar: buildAppBar(context, '달력'),
@@ -32,7 +30,7 @@ class CalenderDate extends StatefulWidget {
 
   dayModify(day){
     if((day ~/ 10) < 1){
-      return '0'+ day.toString();
+      return '0$day';
     }
     else{
       return day.toString();
@@ -41,7 +39,7 @@ class CalenderDate extends StatefulWidget {
 
   monthModify(month){
     if((month ~/ 10) < 1){
-      return '0'+ month.toString();
+      return '0$month';
     }
     else{
       return month.toString();
@@ -163,9 +161,9 @@ class _CalenderHomePageState extends State<CalenderHomePage> {
             Align(
                 alignment: Alignment.topLeft,
                 child: Container(
-                  child: Text(yearAndMonth(index, widget.startYear, widget.startMonth)[0].toString() + '__' + yearAndMonth(index, widget.startYear, widget.startMonth)[1].toString() , style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600)),
                   margin: EdgeInsets.fromLTRB(20, 30, 0, 10),
                   decoration: BoxDecoration(color: Colors.white),
+                  child: Text('${yearAndMonth(index, widget.startYear, widget.startMonth)[0]}__${yearAndMonth(index, widget.startYear, widget.startMonth)[1]}' , style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600)),
                 )
             ),
             SizedBox(child: CalendarBar(), width: 450, height: 70),

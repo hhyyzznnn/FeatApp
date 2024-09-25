@@ -73,7 +73,7 @@ class ootdBody extends StatelessWidget {
             children: [
               Container(
                   margin: EdgeInsets.fromLTRB(27, 10, 0, 10),
-                  child: Text(year.toString() +'. '+month.toString()+'. '+day.toString(), style: TextStyle(fontSize: 22))),
+                  child: Text('$year. $month. $day', style: TextStyle(fontSize: 22))),
               Spacer()
             ],
           ),
@@ -113,7 +113,7 @@ class ootdBody extends StatelessWidget {
                   ],
                 ),
               ),
-              Container(
+              SizedBox(
                 height: 100,
                 width: 200,
                 child: Column(

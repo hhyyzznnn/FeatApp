@@ -90,7 +90,6 @@ class _SignState extends State<Sign> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(

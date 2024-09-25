@@ -6,6 +6,7 @@ PreferredSizeWidget buildAppBar(BuildContext context, String pageTitle) {
   final size = MediaQuery.of(context).size;
 
   return AppBar(
+    scrolledUnderElevation: 0,
     backgroundColor: Colors.white,
     leading: IconButton(padding: EdgeInsets.zero, constraints: BoxConstraints(), onPressed: (){
       Navigator.pop(context);

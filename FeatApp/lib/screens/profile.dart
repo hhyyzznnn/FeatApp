@@ -134,8 +134,17 @@ class _ProFilePageState extends State<ProFilePage> {
       setState(() {
         _image = File(pickedFile.path);
       });
-      
-      uploadProfileImage(_image!);
+
+      String fileName = pickedFile.path.split('/').last;
+      print('File name: $fileName');
+
+      String? uploadUrl = await getUploadUrl(userId, fileName);
+
+      if (uploadUrl != null) {
+        await uploadImageToUrl(uploadUrl, _image!);
+      } else {
+        print('Failed to retrieve upload URL.');
+      }
     }
   }
 
@@ -182,40 +191,54 @@ class _ProFilePageState extends State<ProFilePage> {
     });
   }
 
-  Future<void> uploadProfileImage(File image) async {
-    final url = Uri.parse('http://localhost:8080/load/'); // 프로필 사진 서버 주소
-
-    final mimeTypeData = lookupMimeType(image.path, headerBytes: [0xFF, 0xD8])?.split('/');
-    if (mimeTypeData == null || mimeTypeData.length != 2) {
-      print('Failed to detect MIME type');
-      return;
-    } // 파일의 형식 확인
-
-    final request = http.MultipartRequest('POST', url);
-
-    request.files.add(
-      await http.MultipartFile.fromPath(
-        'file',
-        image.path,
-        contentType: MediaType(mimeTypeData[0], mimeTypeData[1]), // MIME 타입 설정
-      ),
-    );
+  Future<String?> getUploadUrl(String userId, String fileName) async {
+    final url = Uri.parse('http://localhost:8080/upload/profile');
 
     try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"userId": userId, "fileName": fileName}),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        return responseData;
+      } else {
+        print('Failed to get upload URL: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Error: $e');
+      return null;
+    }
+  }
+
+  Future<void> uploadImageToUrl(String uploadUrl, File image) async {
+    final mimeTypeData = lookupMimeType(image.path, headerBytes: [0xFF, 0xD8])?.split('/');
+
+    try {
+      final request = http.MultipartRequest('PUT', Uri.parse(uploadUrl));
+
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'file',
+          image.path,
+          contentType: MediaType(mimeTypeData![0], mimeTypeData[1]), // MIME 타입 설정
+        ),
+      );
+
       final response = await request.send();
 
       if (response.statusCode == 200) {
-        print('Image uploaded successfully!');
-        final responseBody = await http.Response.fromStream(response);
-        final responseData = jsonDecode(responseBody.body);
-        print('Response: ${responseData}');
+        print('Image uploaded successfully.');
       } else {
-        print('Failed to upload image. Status code: ${response.statusCode}');
+        print('Failed to upload image: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error uploading image: $e');
+      print('Error: $e');
     }
-  } // 프로필 사진 업로드
+  }
 
   void logoutConfirm(BuildContext context) {
     showDialog(

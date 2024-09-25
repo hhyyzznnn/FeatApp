@@ -8,6 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:feat/screens/signin.dart';
 import 'package:http/http.dart' as http;
 import 'package:feat/utils/appbar.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
 
 class ProFilePage extends StatefulWidget {
   const ProFilePage({super.key});
@@ -17,7 +19,7 @@ class ProFilePage extends StatefulWidget {
 }
 
 class _ProFilePageState extends State<ProFilePage> {
-  XFile? _image;
+  File? _image;
   final ImagePicker picker = ImagePicker();
 
   Map userSetting = {}; // 유저 세팅을 저장할 맵
@@ -85,6 +87,7 @@ class _ProFilePageState extends State<ProFilePage> {
     );
   }
 
+  @override
   void initState() {
     super.initState();
     requestPermissions();
@@ -101,8 +104,10 @@ class _ProFilePageState extends State<ProFilePage> {
     final pickedFile = await picker.pickImage(source: source);
     if (pickedFile != null) {
       setState(() {
-        _image = pickedFile;
+        _image = File(pickedFile.path);
       });
+      
+      uploadImage(_image!);
     }
   }
 
@@ -133,48 +138,59 @@ class _ProFilePageState extends State<ProFilePage> {
   bool friNotifications = false;
   bool allNotifications = false; // 서버 연결 후 코드 삭제할 예정
 
-  Future<void> updateNotificationStatus(String type, bool value) async {
-    final url = Uri.parse('http://localhost:8080/load/');  // 유저 설정 서버 주소 추가
-
-    try {
-      final response = await http.post(
-        url,
-        body: {
-          'type': type,            // 알림 유형 (req, fri, all 등)
-          'status': value.toString(),  // 알림 상태 (true/false)
-        },
-      );
-
-      if (response.statusCode == 200) {
-        print('Notification updated successfully');
-      } else {
-        print('Failed to update notification: ${response.statusCode}');
-      }
-    } catch (error) {
-      print('Error updating notification: $error');
-    }
-  }
-
   void toggleReqNotifications(bool? value) {
     setState(() {
       reqNotifications = value ?? false;
     });
-    updateNotificationStatus('req', reqNotifications);  // 서버로 상태 전송
   }
 
   void toggleFriNotifications(bool? value) {
     setState(() {
       friNotifications = value ?? false;
     });
-    updateNotificationStatus('fri', friNotifications);  // 서버로 상태 전송
   }
 
   void toggleAllNotifications(bool? value) {
     setState(() {
       allNotifications = value ?? false;
     });
-    updateNotificationStatus('all', allNotifications);  // 서버로 상태 전송
   }
+
+  Future<void> uploadImage(File image) async {
+    final url = Uri.parse('http://localhost:8080/load/'); // 프로필 사진 서버 주소
+
+    final mimeTypeData = lookupMimeType(image.path, headerBytes: [0xFF, 0xD8])?.split('/');
+    if (mimeTypeData == null || mimeTypeData.length != 2) {
+      print('Failed to detect MIME type');
+      return;
+    } // 파일의 형식 확인
+
+    final request = http.MultipartRequest('POST', url);
+
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        'file',
+        image.path,
+        contentType: MediaType(mimeTypeData[0], mimeTypeData[1]), // MIME 타입 설정
+      ),
+    );
+
+    try {
+      final response = await request.send();
+
+      if (response.statusCode == 200) {
+        print('Image uploaded successfully!');
+        final responseBody = await http.Response.fromStream(response);
+        final responseData = jsonDecode(responseBody.body);
+        print('Response: ${responseData}');
+      } else {
+        print('Failed to upload image. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error uploading image: $e');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -209,9 +225,8 @@ class _ProFilePageState extends State<ProFilePage> {
                             padding: EdgeInsets.all(size.width * 0.05),
                             child: CircleAvatar(
                               radius: size.width * 0.2, backgroundImage: _image != null
-                                ? FileImage(File(_image!.path))
-                                : const AssetImage('hanni.jpeg')
-                                  as ImageProvider,
+                                ? FileImage(_image!)
+                                : const AssetImage('hanni.jpeg') as ImageProvider,
                             ),
                           ),
                           Padding(
@@ -284,17 +299,17 @@ class _ProFilePageState extends State<ProFilePage> {
                     children: [
                       ListTile(onTap: () {}, dense: true,
                         title: Text('이메일', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
-                        subtitle: Text(userInfo['userEmail']!, style: TextStyle(color: Colors.grey))
+                        subtitle: Text(userInfo['userEmail'], style: TextStyle(color: Colors.grey))
                       ),
                       Divider(height: 1,color: Colors.grey, indent: size.width * 0.025, endIndent: size.width * 0.025),
                       ListTile(onTap: () {}, dense: true,
                           title: Text('전화번호', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
-                          subtitle: Text(userInfo['userPhone']!, style: TextStyle(color: Colors.grey))
+                          subtitle: Text(userInfo['userPhone'], style: TextStyle(color: Colors.grey))
                       ),
                       Divider(height: 1, color: Colors.grey, indent: size.width * 0.025, endIndent: size.width * 0.025),
                       ListTile(onTap: () {}, dense: true,
-                          title: Text('birthday', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
-                          subtitle: Text(userInfo[2]!, style: TextStyle(color: Colors.grey))
+                          title: Text('생년월일', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
+                          subtitle: Text(userInfo['birthday'], style: TextStyle(color: Colors.grey))
           ),
                     ],
                   ),

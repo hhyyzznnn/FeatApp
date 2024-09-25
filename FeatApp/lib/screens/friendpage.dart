@@ -195,14 +195,13 @@ class FriendComponent extends StatelessWidget {
                           margin: EdgeInsets.fromLTRB(10, 20, 0, 0),
                           child: Text('친구1', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500))),
                     ),
-                  ),
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Container(
-                      margin: EdgeInsets.fromLTRB(12, 0, 0, 0),
-                      child: Text('ID', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Container(
+                        margin: EdgeInsets.fromLTRB(12, 0, 0, 0),
+                        child: Text('ID', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),

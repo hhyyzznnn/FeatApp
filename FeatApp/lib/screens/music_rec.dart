@@ -289,6 +289,7 @@ class _MusicRecPageState extends State<MusicRecPage> {
               color: Color(0xFFc7c7c7),
             ),
           ),
+          // music list
           Align(
             alignment: Alignment(0, -0.3),
             child: Container(

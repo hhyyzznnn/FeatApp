@@ -39,6 +39,7 @@ dependencies:
   path_provider:
   audioplayers: ^6.1.0
   flutter_screenutil: ^5.8.4
+  flutter_sound: ^9.1.7
   mime:
   http_parser:
   shared_preferences: ^2.3.2

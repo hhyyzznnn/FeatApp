@@ -11,12 +11,21 @@ class FriendPage extends StatefulWidget {
 }
 
 class _FriendPageState extends State<FriendPage> {
-  List<String?>Friends = [];
-
+  List<String?> friends = [];// 검색된 친구 목록 저장
+  List<String?> searchResults = [];  // 검색된 유저 목록 저장
   final String userId = "user1";
+  String searchQuery = "";
+  bool isSearching = false; // 검색 상태를 확인하는 변수
 
+  @override
+  void initState() {
+    super.initState();
+    loadFriends();
+  }
+
+  // 기존 친구 목록을 불러오는 함수
   Future<void> loadFriends() async {
-    final url = Uri.parse('http://localhost:8080/load/'); // 친구 서버 주소 추가
+    final url = Uri.parse('http://localhost:8080/search/');
     try {
       final response = await http.post(
         url,
@@ -26,12 +35,35 @@ class _FriendPageState extends State<FriendPage> {
 
       if (response.statusCode == 200) {
         setState(() {
-          Friends = List<String?>.from(
-              jsonDecode(response.body)); // JSON 데이터를 리스트로 변환
-          print(Friends);
+          friends = List<String?>.from(
+              jsonDecode(response.body));
+          print(friends);
         });
       } else {
-        throw Exception('Failed to friends list');
+        throw Exception('Failed to load friends');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  // 검색어에 맞는 모든 유저를 불러오는 함수
+  Future<void> searchUsers(String query) async {
+    final url = Uri.parse('http://localhost:8080/searchUsers/');
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"query": query}),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          searchResults = List<String?>.from(jsonDecode(response.body));
+          print(searchResults);
+        });
+      } else {
+        throw Exception('Failed to search users');
       }
     } catch (e) {
       print('Error: $e');
@@ -42,27 +74,43 @@ class _FriendPageState extends State<FriendPage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-          appBar: buildAppBar(context, '친구'),
-          body: Column(
-              children: [
-                Search(),
-                Expanded(
-                  child: ListView.builder(
-                      itemCount: 10,
-                      itemBuilder: (context, index){
-                        return friendComponent();
-                      }
-                  ),
-                )
-              ]
-          )
+        appBar: buildAppBar(context, '친구'),
+        body: Column(
+          children: [
+            Search(
+                onSearch: (query) {
+                  setState(() {
+                    isSearching = query.isNotEmpty;
+                    searchQuery = query;
+                  });
+                  if (isSearching) {
+                    searchUsers(query);
+                  } else {
+                    loadFriends();
+                  }
+                },
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: isSearching ? searchResults.length : friends.length,
+                itemBuilder: (context, index) {
+                  final displayedList = isSearching ? searchResults : friends;
+                  return FriendComponent(friendName: displayedList[index]);
+                },
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
 }
 
+
 class Search extends StatefulWidget {
-  Search({super.key});
+  final Function(String) onSearch;
+
+  Search({super.key, required this.onSearch});
 
   @override
   State<Search> createState() => _SearchState();
@@ -76,18 +124,24 @@ class _SearchState extends State<Search> {
       child: Container(
         width: 450,
         height: 50,
-        margin: EdgeInsets.fromLTRB(0, 0, 0, 20),
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.grey),
+        margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.grey,
+        ),
         child: Row(
           children: [
             Container(
-                margin: EdgeInsets.fromLTRB(10, 0, 20, 0),
-                child: Icon(Icons.search, color: Colors.white70)
+              margin: EdgeInsets.fromLTRB(10, 0, 20, 0),
+              child: Icon(Icons.search, color: Colors.white70),
             ),
             SizedBox(
               width: 300,
               height: 70,
               child: TextField(
+                onChanged: (text) {
+                  widget.onSearch(text);
+                },
                 decoration: InputDecoration(
                   hintText: '친구 추가 또는 검색',
                   hintStyle: TextStyle(color: Colors.white70),
@@ -96,7 +150,7 @@ class _SearchState extends State<Search> {
                 style: TextStyle(color: Colors.white70),
                 cursorColor: Colors.white70,
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -104,19 +158,17 @@ class _SearchState extends State<Search> {
   }
 }
 
-class friendComponent extends StatefulWidget {
-  const friendComponent({super.key});
 
-  @override
-  State<friendComponent> createState() => _friendComponentState();
-}
+class FriendComponent extends StatelessWidget {
+  final String? friendName;
 
-class _friendComponentState extends State<friendComponent> {
+  FriendComponent({super.key, this.friendName});
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, 'signin');
+        Navigator.pushNamed(context, 'calendar');
       },
       child: Container(
         margin: EdgeInsets.fromLTRB(25, 0, 20, 0),
@@ -127,7 +179,10 @@ class _friendComponentState extends State<friendComponent> {
             Container(
               width: 100,
               height: 100,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.blue),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: Colors.blue,
+              ),
             ),
             SizedBox(
                 width: 200,
@@ -140,14 +195,16 @@ class _friendComponentState extends State<friendComponent> {
                           margin: EdgeInsets.fromLTRB(10, 20, 0, 0),
                           child: Text('친구1', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500))),
                     ),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Container(
-                          margin: EdgeInsets.fromLTRB(12, 0, 0, 0),
-                          child: Text('ID', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500))),
-                    )
-                  ],
-                )
+                  ),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Container(
+                      margin: EdgeInsets.fromLTRB(12, 0, 0, 0),
+                      child: Text('ID', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

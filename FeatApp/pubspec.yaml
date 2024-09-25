@@ -42,6 +42,7 @@ dependencies:
   flutter_sound: ^9.1.7
   mime:
   http_parser:
+  shared_preferences: 
 
 
 

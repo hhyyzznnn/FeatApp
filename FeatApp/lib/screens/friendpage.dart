@@ -135,7 +135,7 @@ class _SearchState extends State<Search> {
               margin: EdgeInsets.fromLTRB(10, 0, 20, 0),
               child: Icon(Icons.search, color: Colors.white70),
             ),
-            Container(
+            SizedBox(
               width: 300,
               height: 70,
               child: TextField(
@@ -184,17 +184,16 @@ class FriendComponent extends StatelessWidget {
                 color: Colors.blue,
               ),
             ),
-            Container(
-              width: 200,
-              height: 100,
-              child: Column(
-                children: [
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: Container(
-                      margin: EdgeInsets.fromLTRB(10, 20, 0, 0),
-                      child: Text(friendName ?? 'Unknown',
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
+            SizedBox(
+                width: 200,
+                height: 100,
+                child: Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child:Container(
+                          margin: EdgeInsets.fromLTRB(10, 20, 0, 0),
+                          child: Text('친구1', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500))),
                     ),
                   ),
                   Align(

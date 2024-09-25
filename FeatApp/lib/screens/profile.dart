@@ -293,8 +293,8 @@ class _ProFilePageState extends State<ProFilePage> {
                       ),
                       Divider(height: 1, color: Colors.grey, indent: size.width * 0.025, endIndent: size.width * 0.025),
                       ListTile(onTap: () {}, dense: true,
-                          title: Text('birthday', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
-                          subtitle: Text(userInfo[2]!, style: TextStyle(color: Colors.grey))
+                          title: Text('생년월일', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
+                          subtitle: Text(userInfo['birthday']!, style: TextStyle(color: Colors.grey))
           ),
                     ],
                   ),

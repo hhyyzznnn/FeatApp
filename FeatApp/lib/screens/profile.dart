@@ -25,8 +25,7 @@ class _ProFilePageState extends State<ProFilePage> {
   Map userSetting = {}; // 유저 세팅을 저장할 맵
   Map userInfo = {}; // 유저 정보를 저장할 리스트
 
-
-  final String userId = "user1";
+  final String userId = "user1"; // 임의로 작성한 유저 아이디
 
   Future<void> loadSettings() async {
 
@@ -53,7 +52,7 @@ class _ProFilePageState extends State<ProFilePage> {
     } catch (e) {
       print('Error: $e');
     }
-  }
+  } // 유저 설정 불러오는 함수(서버)
 
   Future<void> loadInfo() async {
 
@@ -76,16 +75,45 @@ class _ProFilePageState extends State<ProFilePage> {
     } catch (e) {
       print('Error: $e');
     }
-  }
+  } // 유저 정보 불러오는 함수 (서버)
 
-  Future<void> deleteUserId() async {
+  Future<void> deleteUserId(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('userId');
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => SignInPage())
     );
-  }
+  } // 로그아웃 함수
+
+  Future<void> deleteAccount(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('userId');
+
+    if (userId != null) {
+      final url = Uri.parse('http://'); // 계정 삭제 기능이 구현된 서버 주소
+      try {
+        final response = await http.post(
+          url,
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode({"userId": userId}),
+        );
+
+        if (response.statusCode == 200) {
+          await prefs.remove('userId');
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => SignInPage()),
+          );
+        } else {
+          throw Exception('Failed to delete account');
+        }
+      } catch (e) {
+        print('Error: $e');
+      }
+    }
+  } // 계정 삭제 함수
 
   @override
   void initState() {
@@ -98,7 +126,7 @@ class _ProFilePageState extends State<ProFilePage> {
   Future<void> requestPermissions() async {
     final camStatus = await Permission.camera.request();
     final phoStatus = await Permission.photos.request();
-  }
+  } // 카메라, 갤러리 권한 (미사용)
 
   Future<void> pickImage(ImageSource source) async {
     final pickedFile = await picker.pickImage(source: source);
@@ -107,7 +135,7 @@ class _ProFilePageState extends State<ProFilePage> {
         _image = File(pickedFile.path);
       });
       
-      uploadImage(_image!);
+      uploadProfileImage(_image!);
     }
   }
 
@@ -132,7 +160,7 @@ class _ProFilePageState extends State<ProFilePage> {
         ],
       ));
     });
-  }
+  } // 사진 촬영 or 갤러리 선택
 
   bool reqNotifications = false;
   bool friNotifications = false;
@@ -143,20 +171,18 @@ class _ProFilePageState extends State<ProFilePage> {
       reqNotifications = value ?? false;
     });
   }
-
   void toggleFriNotifications(bool? value) {
     setState(() {
       friNotifications = value ?? false;
     });
   }
-
   void toggleAllNotifications(bool? value) {
     setState(() {
       allNotifications = value ?? false;
     });
   }
 
-  Future<void> uploadImage(File image) async {
+  Future<void> uploadProfileImage(File image) async {
     final url = Uri.parse('http://localhost:8080/load/'); // 프로필 사진 서버 주소
 
     final mimeTypeData = lookupMimeType(image.path, headerBytes: [0xFF, 0xD8])?.split('/');
@@ -189,8 +215,61 @@ class _ProFilePageState extends State<ProFilePage> {
     } catch (e) {
       print('Error uploading image: $e');
     }
-  }
+  } // 프로필 사진 업로드
 
+  void logoutConfirm(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('로그아웃'),
+          content: const Text('정말 로그아웃하시겠습니까?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('취소'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('확인'),
+              onPressed: () {
+                deleteUserId(context);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  } // 로그아웃 확인
+
+  void deleteAccountConfirm(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('계정 삭제'),
+          content: const Text('정말 계정을 삭제하시겠습니까?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('취소'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('확인'),
+              onPressed: () {
+                deleteAccount(context);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  } // 계정 삭제 확인
 
   @override
   Widget build(BuildContext context) {
@@ -321,12 +400,13 @@ class _ProFilePageState extends State<ProFilePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(onPressed: () {
-                      deleteUserId(); // 정말 로그아웃하시겠습니까? 등 팝업창 추가해야함. 지금은 유저아이디 즉시 삭제.
-                    }, style: ElevatedButton.styleFrom(
+                        logoutConfirm(context);
+                      }, style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), backgroundColor: Color(0xff3f3f3f),
                         minimumSize: Size(size.width * 0.45, size.height * 0.075), alignment: Alignment.center),
                         child: Text('계정 삭제', style: TextStyle(color: Colors.white),)),
                     ElevatedButton(onPressed: () {
+                      deleteAccountConfirm(context);
                     }, style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), backgroundColor: Color(0xff3f3f3f),
                         minimumSize: Size(size.width * 0.45, size.height * 0.075), alignment: Alignment.center),

@@ -9,7 +9,6 @@ import 'package:feat/screens/camera_preview.dart';
 
 
 class CameraPage extends StatefulWidget {
-
   CameraPage({super.key});
 
   @override

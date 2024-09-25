@@ -76,10 +76,14 @@ class PreviewPage extends StatelessWidget {
                   ),
                 ),
                 // 중앙에 + 모양의 SVG 추가
-                Positioned(
-                  child: SvgPicture.asset(
-                    'assets/icons/plus.svg',
-                  ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MusicRecPage()),
+                    );
+                  },
+                  child: SvgPicture.asset('assets/icons/plus.svg',),
                 ),
               ],
             ),

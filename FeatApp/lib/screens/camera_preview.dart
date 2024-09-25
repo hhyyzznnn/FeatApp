@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:io';
 import 'music_rec.dart';
 
@@ -19,9 +20,9 @@ class PreviewPage extends StatelessWidget {
         children: [
           // 이미지 프리뷰
           Positioned(
-            bottom: size.height * 0.13, // main에서 사용한 위치와 동일
-            left: size.width * 0.04, // main에서 사용한 위치와 동일
-            right: size.width * 0.04, // main에서 사용한 위치와 동일
+            bottom: size.height * 0.13,
+            left: size.width * 0.04,
+            right: size.width * 0.04,
             child: Center(
               child: SizedBox(
                 width: containerWidth,
@@ -38,37 +39,52 @@ class PreviewPage extends StatelessWidget {
             top: size.height * 0.02,
             left: size.width * 0.02,
             child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.white),
+              icon: Icon(Icons.arrow_back, size: size.width * 0.075, color: Colors.white),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
           ),
-          // OK 버튼
+          // + 버튼
           Positioned(
             bottom: size.height * 0.05,
             left: 0,
             right: 0,
-            child: Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => MusicRecScreen()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xff3F3F3F), // 버튼 색상
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                  textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20), // 라운드 버튼
+            child: Stack(
+              alignment: Alignment.center, // Stack 내에서 모든 위젯을 중앙 정렬
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MusicRecPage()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: CircleBorder(), // 원형 버튼으로 만들기
+                    backgroundColor: Color(0xff3F3F3F), // 배경색
+                    padding: EdgeInsets.zero, // 내부 패딩 없애기
+                    side: BorderSide(color: Colors.black, width: 10), // 검정 테두리
+                    minimumSize: Size(size.width * 0.3, size.width * 0.3), // 크기 설정
+                  ),
+                  child: Container(
+                    width: size.width * 0.3,
+                    height: size.width * 0.3,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle, // 원형으로 만들기
+                    ),
                   ),
                 ),
-                child: Text('OK', style: TextStyle(color: Colors.white)),
-              ),
+                // 중앙에 + 모양의 SVG 추가
+                Positioned(
+                  child: SvgPicture.asset(
+                    'assets/icons/plus.svg',
+                  ),
+                ),
+              ],
             ),
-          ),
+          )
+
         ],
       ),
     );

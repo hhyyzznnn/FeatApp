@@ -264,7 +264,7 @@ class _CameraPageState extends State<CameraPage> {
             top: size.height * 0.02,
             left: size.width * 0.02,
             child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.white),
+              icon: Icon(Icons.arrow_back, size: size.width * 0.075, color: Colors.white),
               onPressed: () {
                 Navigator.pop(context);
               },

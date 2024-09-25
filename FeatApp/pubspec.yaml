@@ -37,7 +37,6 @@ dependencies:
   flutter_svg: ^2.0.10+1
   camera:
   path_provider:
-  shared_preferences:
   audioplayers: ^6.1.0
   shared_preferences: ^2.0.6
   flutter_screenutil: ^5.8.4

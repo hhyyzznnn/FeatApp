@@ -41,6 +41,7 @@ dependencies:
   flutter_screenutil: ^5.8.4
   mime:
   http_parser:
+  shared_preferences: ^2.3.2
 
 
 

@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:feat/utils/appbar.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
+import 'package:dio/dio.dart';
 
 class ProFilePage extends StatefulWidget {
   const ProFilePage({super.key});
@@ -28,7 +29,7 @@ class _ProFilePageState extends State<ProFilePage> {
   final String userId = "user1"; // 임의로 작성한 유저 아이디
 
   Future<void> sendUserId(String userId, String endpoint) async {
-    final url = Uri.parse('http://192.168.63.212:8080/edit/$endpoint'); // 엔드포인트를 변수로 사용
+    final url = Uri.parse('http://192.168.184.212:8080/edit/$endpoint'); // 엔드포인트를 변수로 사용
 
     try {
       final response = await http.post(
@@ -49,7 +50,7 @@ class _ProFilePageState extends State<ProFilePage> {
 
   Future<void> loadSettings() async {
 
-    final url = Uri.parse('http://192.168.63.212:8080/load/alarmSetting'); // 설정 서버 주소 추가
+    final url = Uri.parse('http://192.168.184.212:8080/load/alarmSetting'); // 설정 서버 주소 추가
     try {
       final response = await http.post(
         url,
@@ -76,7 +77,7 @@ class _ProFilePageState extends State<ProFilePage> {
 
   Future<void> loadInfo() async {
 
-    final url = Uri.parse('http://192.168.63.212:8080/load/userInfo'); // 유저 정보 서버 주소 추가
+    final url = Uri.parse('http://192.168.184.212:8080/load/userInfo'); // 유저 정보 서버 주소 추가
     try {
       final response = await http.post(
         url,
@@ -161,7 +162,7 @@ class _ProFilePageState extends State<ProFilePage> {
       String? uploadUrl = await getUploadUrl(userId, fileName);
 
       if (uploadUrl != null) {
-        await uploadImageToUrl(uploadUrl, _image!);
+        await uploadImageToUrl(_image!, uploadUrl);
       } else {
         print('Failed to retrieve upload URL.');
       }
@@ -218,7 +219,7 @@ class _ProFilePageState extends State<ProFilePage> {
 
   Future<String> getUploadUrl(String userId, String fileName) async {
     final response = await http.post(
-      Uri.parse('http://192.168.63.212:8080/upload/profile'),
+      Uri.parse('http://192.168.184.212:8080/upload/profile'),
       headers: {'Content-Type': 'application/json'},
       body: '{"userId": "$userId", "fileName": "$fileName"}',
     );
@@ -230,21 +231,17 @@ class _ProFilePageState extends State<ProFilePage> {
     }
   } // 프로필 사진 업로드할 서버 주소 받아오기
 
-  Future<void> uploadImageToUrl(String uploadUrl, File image) async {
-    final mimeTypeData = lookupMimeType(image.path, headerBytes: [0xFF, 0xD8])?.split('/');
+  Future<void> uploadImageToUrl(File image, String uploadUrl) async {
+    Dio dio = Dio();
 
     try {
-      final request = http.MultipartRequest('PUT', Uri.parse(uploadUrl));
+      String fileName = image.path.split('/').last;
 
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'file',
-          image.path,
-          contentType: MediaType(mimeTypeData![0], mimeTypeData[1]), // MIME 타입 설정
-        ),
-      );
+      FormData formData = FormData.fromMap({
+        "file": await MultipartFile.fromFile(image.path, filename: fileName),
+      });
 
-      final response = await request.send();
+      Response response = await dio.put(uploadUrl, data: formData);
 
       if (response.statusCode == 200) {
         print('Image uploaded successfully.');
@@ -254,7 +251,7 @@ class _ProFilePageState extends State<ProFilePage> {
     } catch (e) {
       print('Error: $e');
     }
-  } // 프로필 사진 업로드
+  }
 
   void logoutConfirm(BuildContext context) {
     showDialog(
@@ -439,13 +436,13 @@ class _ProFilePageState extends State<ProFilePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(onPressed: () {
-                        logoutConfirm(context);
+                        deleteAccountConfirm(context);
                       }, style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), backgroundColor: Color(0xff3f3f3f),
                         minimumSize: Size(size.width * 0.45, size.height * 0.075), alignment: Alignment.center),
                         child: Text('계정 삭제', style: TextStyle(color: Colors.white),)),
                     ElevatedButton(onPressed: () {
-                      deleteAccountConfirm(context);
+                      logoutConfirm(context);
                     }, style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), backgroundColor: Color(0xff3f3f3f),
                         minimumSize: Size(size.width * 0.45, size.height * 0.075), alignment: Alignment.center),

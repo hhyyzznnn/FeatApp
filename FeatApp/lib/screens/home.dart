@@ -13,11 +13,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<String?> homePosts = []; // 이미지 URL을 저장할 리스트
+  Map ProfileImage = {}; // 유저 정보를 저장할 맵
 
+  
   final String userId = "user1"; // 유저 아이디 임시로 저장
 
   Future<void> loadPosts() async {
-    final url = Uri.parse('http://192.168.63.212:8080/load/posts/home');
+    final url = Uri.parse('http://192.168.184.212:8080/load/posts/home');
     try {
       final response = await http.post(
         url,
@@ -39,6 +41,29 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<void> loadProfile() async {
+
+    final url = Uri.parse('http://192.168.184.212:8080/load/userInfo');
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"userId": userId}),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          ProfileImage = Map.from(jsonDecode(response.body)); // JSON 데이터를 리스트로 변환
+          print(ProfileImage);
+        });
+      } else {
+        throw Exception('Failed to load profile image');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  } // 프로필 사진 불러오는 함수 (서버)
+
   @override
   void initState() {
     super.initState();
@@ -46,7 +71,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)  {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -81,7 +106,15 @@ class _HomePageState extends State<HomePage> {
                 },
                 borderRadius: BorderRadius.circular(size.height * 0.02),
                 child: ClipOval(
-                  child: Icon(Icons.person, size: size.height * 0.035),
+                  child: ProfileImage['profile'] != null && ProfileImage['profile'].isNotEmpty
+                      ? Image.network(
+                    ProfileImage['profile'],
+                    fit: BoxFit.cover,
+                  )
+                      : Icon(
+                    Icons.person,
+                    size: size.height * 0.035,
+                  ),
                 ),
               ),
             )
@@ -132,7 +165,7 @@ class _HomePageState extends State<HomePage> {
                 itemBuilder: (context, index) {
                   final imageUrl = homePosts[index];
                   return Container(
-                    margin: EdgeInsets.only(right: 28), // 좌우 여백 설정
+                    margin: EdgeInsets.only(left: 15,right: 30), // 좌우 여백 설정
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10), // 모서리를 둥글게 설정
                       boxShadow: [

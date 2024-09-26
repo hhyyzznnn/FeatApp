@@ -25,7 +25,7 @@ class _FriendPageState extends State<FriendPage> {
 
   // 기존 친구 목록을 불러오는 함수
   Future<void> loadFriends() async {
-    final url = Uri.parse('http://192.168.63.212:8080/search/');
+    final url = Uri.parse('http://192.168.184.212:8080/search/');
     try {
       final response = await http.post(
         url,
@@ -49,7 +49,7 @@ class _FriendPageState extends State<FriendPage> {
 
   // 검색어에 맞는 모든 유저를 불러오는 함수
   Future<void> searchUsers(String query) async {
-    final url = Uri.parse('http://192.168.63.212:8080/searchUsers/');
+    final url = Uri.parse('http://192.168.184.212:8080/searchUsers/');
     try {
       final response = await http.post(
         url,
@@ -122,7 +122,7 @@ class _SearchState extends State<Search> {
     return Align(
       alignment: Alignment.topCenter,
       child: Container(
-        width: 450,
+        width: size.width * 0.9,
         height: 50,
         margin: EdgeInsets.fromLTRB(20, 0, 20, 20),
         decoration: BoxDecoration(
@@ -132,11 +132,11 @@ class _SearchState extends State<Search> {
         child: Row(
           children: [
             Container(
-              margin: EdgeInsets.fromLTRB(10, 0, 20, 0),
+              margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
               child: Icon(Icons.search, color: Colors.white70),
             ),
             SizedBox(
-              width: 300,
+              width: size.width * 0.6,
               height: 70,
               child: TextField(
                 onChanged: (text) {
@@ -166,6 +166,7 @@ class FriendComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, 'calendar');

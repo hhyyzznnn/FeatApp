@@ -3,86 +3,118 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:camera/camera.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:feat/screens/camera_preview.dart';
-
+import 'package:path_provider/path_provider.dart';
+import 'camera_preview.dart';
 
 class CameraPage extends StatefulWidget {
-  CameraPage({super.key});
+  final CameraDescription camera;
+  const CameraPage({Key? key, required this.camera}) : super(key: key);
 
   @override
   _CameraPageState createState() => _CameraPageState();
 }
 
 class _CameraPageState extends State<CameraPage> {
-  CameraController? _controller; // 카메라 컨트롤러
-  Future<void>? _initializeControllerFuture; // 카메라 초기화 완료를 위한 Future
+  late CameraController _controller; // 카메라 컨트롤러
+  late Future<void> _initializeControllerFuture; // 카메라 초기화 완료를 위한 Future
   bool _isFlashOn = false; // 후레쉬 상태 플래그
+  late List<CameraDescription> _cameras; // 카메라 리스트
   int _selectedCameraIndex = 0; // 현재 선택된 카메라 인덱스 (0: 후면, 1: 전면)
-  File? _galleryImage; // 갤러리에서 선택한 이미지 저장용
-  String? _imagePath; // 선택한 이미지 경로 저장용
-  List<CameraDescription>? _cameras;
 
-  final ImagePicker _picker = ImagePicker(); // ImagePicker 인스턴스
+  File? _galleryImage;
+  String? _imagePath;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
-    _initializeCameraAndPermissions();
+    _requestPermissions();
   }
 
-  Future<void> _initializeCameraAndPermissions() async {
-    // 카메라 목록을 가져오기
-    _cameras = await availableCameras();
+  // 권한 요청 메서드
+  Future<void> _requestPermissions() async {
+    // 카메라 권한 확인 및 요청
+    var status = await Permission.camera.status;
+    if (!status.isGranted) {
+      // 권한이 없으면 사용자에게 요청
+      await Permission.camera.request();
+    }
 
-    // 권한 요청
-    final granted = await requestPermissions();
-    if (granted && _cameras!.isNotEmpty) {
-      _initializeCamera(_selectedCameraIndex);
+    if (await Permission.camera.isGranted) {
+      _initializeCameras();
     } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('카메라 및 저장소 권한이 필요합니다.')),
+      // 권한이 거부된 경우 처리
+      _showPermissionDeniedDialog();
+    }
+  }
+
+  // 권한 거부 시 경고창
+  void _showPermissionDeniedDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('카메라 권한이 필요합니다'),
+          content: Text('카메라 기능을 사용하려면 권한이 필요합니다. 설정에서 권한을 허용해 주세요.'),
+          actions: [
+            TextButton(
+              child: Text('확인'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
         );
-      });
-    }
-  }
-
-  // 카메라와 저장소 권한을 요청
-  Future<bool> requestPermissions() async {
-    var cameraStatus = await Permission.camera.status;
-    var storageStatus = await Permission.storage.status;
-
-    // 카메라 권한 요청
-    if (cameraStatus.isDenied) {
-      cameraStatus = await Permission.camera.request();
-    }
-
-    // 저장소 권한 요청
-    if (storageStatus.isDenied) {
-      storageStatus = await Permission.storage.request();
-    }
-
-    return cameraStatus.isGranted && storageStatus.isGranted;
-  }
-
-  // 선택한 카메라 초기화
-  void _initializeCamera(int cameraIndex) {
-    _controller = CameraController(
-      _cameras![cameraIndex], // 선택된 카메라
-      ResolutionPreset.high, // 해상도 설정
+      },
     );
-    setState(() {
-      _initializeControllerFuture = _controller!.initialize(); // 카메라 초기화
-    });
   }
 
-  // 사진 촬영 및 저장
+  // 카메라 초기화
+  Future<void> _initializeCameras() async {
+    // 사용 가능한 카메라 목록 가져오기
+    _cameras = await availableCameras();
+    _initializeController();
+  }
+
+  void _initializeController() async {
+    _controller = CameraController(
+      _cameras[_selectedCameraIndex],
+      ResolutionPreset.medium,
+    );
+
+    _initializeControllerFuture = _controller.initialize();
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose(); // 컨트롤러 해제
+    super.dispose();
+  }
+
+  void _toggleFlash() async {
+    if (_controller.value.isInitialized) {
+      _isFlashOn = !_isFlashOn;
+      await _controller.setFlashMode(
+        _isFlashOn ? FlashMode.torch : FlashMode.off,
+      );
+      setState(() {});
+    }
+  }
+
+  void _switchCamera() {
+    // 카메라 전환 메서드
+    setState(() {
+      _selectedCameraIndex = (_selectedCameraIndex + 1) % _cameras.length;
+    });
+    _initializeController(); // 새로운 카메라로 초기화
+  }
+
   Future<void> _takePicture() async {
     try {
-      await _initializeControllerFuture; // 카메라 초기화 완료 대기
-      final image = await _controller!.takePicture(); // 사진 촬영
+      await _initializeControllerFuture;
+      final image = await _controller.takePicture(); // 사진 촬영
 
       // 앱의 문서 디렉토리에 사진 저장
       final directory = await getApplicationDocumentsDirectory();
@@ -95,33 +127,14 @@ class _CameraPageState extends State<CameraPage> {
         _imagePath = path; // 이미지 경로 저장
       });
 
-      // 프리뷰 화면으로 이동
-      Navigator.push(context,
+      if (!mounted) return;
+      await Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => PreviewPage(imagePath: _imagePath!),
+          builder: (context) => PreviewPage(imagePath: image.path), // 사진 미리보기 페이지로 이동
         ),
       );
     } catch (e) {
-      print(e);
-    }
-  }
-
-  // 후레쉬 전환
-  void _toggleFlash() async {
-    if (_controller != null) {
-      _isFlashOn = !_isFlashOn;
-      await _controller!.setFlashMode(
-        _isFlashOn ? FlashMode.torch : FlashMode.off,
-      );
-      setState(() {});
-    }
-  }
-
-  // 카메라 전환
-  void _switchCamera() {
-    if (_cameras != null && _cameras!.length > 1) {
-      _selectedCameraIndex = (_selectedCameraIndex + 1) % _cameras!.length;
-      _initializeCamera(_selectedCameraIndex);
+      print(e); // 에러 출력
     }
   }
 
@@ -146,16 +159,8 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   @override
-  void dispose() {
-    _controller?.dispose(); // 카메라 컨트롤러 리소스 해제
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final size = MediaQuery
-        .of(context)
-        .size;
+    final size = MediaQuery.of(context).size;
     final containerWidth = size.width * 0.92;
     final containerHeight = containerWidth * 16 / 9;
 
@@ -163,34 +168,44 @@ class _CameraPageState extends State<CameraPage> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // 카메라 미리보기
-          if (_initializeControllerFuture != null)
-            FutureBuilder<void>(
-              future: _initializeControllerFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return Positioned(
-                    bottom: size.height * 0.13,
-                    left: size.width * 0.04,
-                    right: size.width * 0.04,
-                    child: Container(
-                      width: containerWidth,
-                      height: containerHeight,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: CameraPreview(_controller!),
-                      ),
-                    ),
-                  );
-                } else {
-                  return Center(child: CircularProgressIndicator());
-                }
+          // 뒤로가기 버튼
+          Positioned(
+            top: size.height * 0.05,
+            left: size.width * 0.04,
+            child: IconButton(
+              icon: Icon(Icons.arrow_back, size: size.width * 0.075, color: Colors.white),
+              onPressed: () {
+                Navigator.of(context).pop(); // 이전 화면으로 이동
               },
             ),
-          // 후레쉬 버튼
+          ),
+          // 카메라 미리보기 부분
+          FutureBuilder<void>(
+            future: _initializeControllerFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return Positioned(
+                  bottom: size.height * 0.13,
+                  left: size.width * 0.04,
+                  right: size.width * 0.04,
+                  child: Container(
+                    width: containerWidth,
+                    height: containerHeight,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: CameraPreview(_controller),
+                    ),
+                  ),
+                );
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
+          // 플래쉬 버튼
           Positioned(
             left: size.width * 0.06,
             bottom: size.height * 0.14,
@@ -206,7 +221,7 @@ class _CameraPageState extends State<CameraPage> {
             right: size.width * 0.06,
             bottom: size.height * 0.14,
             child: IconButton(
-              icon: SvgPicture.asset('assets/icons/refresh.svg') ,
+              icon: SvgPicture.asset('assets/icons/refresh.svg'),
               onPressed: _switchCamera,
             ),
           ),
@@ -217,9 +232,7 @@ class _CameraPageState extends State<CameraPage> {
             right: 0,
             child: Center(
               child: InkWell(
-                onTap: () async {
-                  await _takePicture();
-                },
+                onTap: _takePicture,
                 customBorder: CircleBorder(),
                 child: Container(
                   width: size.width * 0.3,
@@ -256,17 +269,6 @@ class _CameraPageState extends State<CameraPage> {
                 )
                     : Icon(Icons.photo, color: Colors.black),
               ),
-            ),
-          ),
-          // 뒤로가기 버튼
-          Positioned(
-            top: size.height * 0.02,
-            left: size.width * 0.02,
-            child: IconButton(
-              icon: Icon(Icons.arrow_back, size: size.width * 0.075, color: Colors.white),
-              onPressed: () {
-                Navigator.pop(context);
-              },
             ),
           ),
         ],

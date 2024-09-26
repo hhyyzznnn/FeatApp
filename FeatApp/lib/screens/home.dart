@@ -219,7 +219,7 @@ class _HomePageState extends State<HomePage> {
                     height: size.width * 0.275,
                     decoration: BoxDecoration(
                       color: Color(0xff3f3f3f),
-                      borderRadius: BorderRadius.circular(60),
+                      borderRadius: BorderRadius.circular(9999),
                       border: Border.all(width: size.width * 0.015, color: Colors.white),
                       boxShadow: [
                         BoxShadow(
@@ -315,7 +315,7 @@ class _SoundWaveformState extends State<SoundWaveform> with TickerProviderStateM
               height: height,
               width: 6,  // 막대 너비
               decoration: BoxDecoration(
-                color: Colors.blueAccent.withOpacity(0.6 + 0.4 * controller.value),  // 동적으로 색상 변경
+                color: Colors.white.withOpacity(0.6 + 0.4 * controller.value),  // 동적으로 색상 변경
                 borderRadius: BorderRadius.circular(9999),
               ),
             );

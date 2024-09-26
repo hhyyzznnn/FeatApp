@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:feat/screens/home.dart';
+import 'package:feat/screens/signup.dart';
 
 class SignInPage extends StatelessWidget {
   const SignInPage({super.key});
@@ -25,7 +26,6 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-
   // 유저의 입력 아이디 패스워드 서버에 전송 후 확인하는 과정
 
   Future<void> saveUserId(String userId) async {
@@ -57,21 +57,19 @@ class _LoginState extends State<Login> {
 
     if (response.statusCode == 200) {
       saveUserId(userId);
-      Navigator.push(context,
-        MaterialPageRoute(
-          builder: (context) => const HomePage(),
-        )
-      );
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const HomePage(),
+          ));
     } else {
-      showSnackBar(context, const Text('아이디 또는 비밀번호가 잘못되었습니다. 아이디와 비밀번호를 정확히 입력해주세요.'));
+      showSnackBar(
+          context, const Text('아이디 또는 비밀번호가 잘못되었습니다. 아이디와 비밀번호를 정확히 입력해주세요.'));
     }
-
   }
-
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Feat.'),
@@ -90,18 +88,13 @@ class _LoginState extends State<Login> {
                     controller: userIdController,
                     decoration: InputDecoration(
                       enabledBorder: UnderlineInputBorder(),
-                      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(
-                          color: Colors.black, width: 1.5
-                      )
-                      ),
+                      focusedBorder: UnderlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.black, width: 1.5)),
                       labelText: 'ID',
                       labelStyle: TextStyle(
-                          color: Colors.black54,
-                          fontWeight: FontWeight.bold
-                      ),
-
-                    )
-                ),
+                          color: Colors.black54, fontWeight: FontWeight.bold),
+                    )),
               ),
             ),
             SizedBox(
@@ -111,26 +104,27 @@ class _LoginState extends State<Login> {
                     controller: passwordController,
                     decoration: InputDecoration(
                         enabledBorder: UnderlineInputBorder(),
-                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(
-                            color: Colors.black, width: 1.5
-                        )
-                        ),
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 1.5)),
                         labelText: 'PW',
                         labelStyle: TextStyle(
                           color: Colors.black54,
                           fontWeight: FontWeight.bold,
-                        )
-                    )
-                ),
+                        ))),
               ),
             ),
             Container(
               padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
               child: Row(
                 children: [
-                  TextButton(onPressed: () {
-
-                  },
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SignUpPage()),
+                      );
+                    },
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.grey,
                     ),
@@ -139,17 +133,18 @@ class _LoginState extends State<Login> {
                   Spacer(),
                   Row(
                     children: [
-                      TextButton(onPressed: () {
-
-                      },
+                      TextButton(
+                          onPressed: () {},
                           style: TextButton.styleFrom(
                             foregroundColor: Colors.grey,
                           ),
                           child: Text('아이디 찾기')),
-                      Text('/', style: TextStyle(color: Colors.grey),),
-                      TextButton(onPressed: () {
-
-                      },
+                      Text(
+                        '/',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      TextButton(
+                          onPressed: () {},
                           style: TextButton.styleFrom(
                             foregroundColor: Colors.grey,
                           ),
@@ -160,9 +155,9 @@ class _LoginState extends State<Login> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(0,40,0,0),
+              padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
               child: ElevatedButton(
-                onPressed: (){
+                onPressed: () {
                   login(context);
                 },
                 style: ElevatedButton.styleFrom(
@@ -175,16 +170,13 @@ class _LoginState extends State<Login> {
                 ),
                 child: Text('로그인'),
               ),
-
             )
           ],
         ),
       ),
-
     );
   }
 }
-
 
 void showSnackBar(BuildContext context, Text text) {
   final snackBar = SnackBar(
@@ -196,7 +188,6 @@ void showSnackBar(BuildContext context, Text text) {
 // and use it to show a SnackBar.
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
-
 
 class NextPage extends StatelessWidget {
   const NextPage({super.key});

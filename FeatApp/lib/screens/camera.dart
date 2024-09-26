@@ -21,7 +21,6 @@ class _CameraPageState extends State<CameraPage> {
   bool _isFlashOn = false; // 후레쉬 상태 플래그
   late List<CameraDescription> _cameras; // 카메라 리스트
   int _selectedCameraIndex = 0; // 현재 선택된 카메라 인덱스 (0: 후면, 1: 전면)
-
   File? _galleryImage;
   String? _imagePath;
   final ImagePicker _picker = ImagePicker();
@@ -269,6 +268,18 @@ class _CameraPageState extends State<CameraPage> {
                 )
                     : Icon(Icons.photo, color: Colors.black),
               ),
+            ),
+          ),
+
+          // 뒤로가기 버튼
+          Positioned(
+            top: size.height * 0.02,
+            left: size.width * 0.02,
+            child: IconButton(
+              icon: Icon(Icons.arrow_back, size: size.width * 0.075, color: Colors.white),
+                onPressed: () {
+                  Navigator.pop(context);
+              },
             ),
           ),
         ],

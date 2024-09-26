@@ -10,7 +10,6 @@ import 'package:http/http.dart' as http;
 import 'package:feat/utils/appbar.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
-import 'package:dio/dio.dart';
 
 class ProFilePage extends StatefulWidget {
   const ProFilePage({super.key});
@@ -29,7 +28,8 @@ class _ProFilePageState extends State<ProFilePage> {
   final String userId = "user1"; // 임의로 작성한 유저 아이디
 
   Future<void> sendUserId(String userId, String endpoint) async {
-    final url = Uri.parse('http://192.168.184.212:8080/edit/$endpoint'); // 엔드포인트를 변수로 사용
+    final url = Uri.parse(
+        'http://172.24.4.212:8080/edit/$endpoint'); // 엔드포인트를 변수로 사용
 
     try {
       final response = await http.post(
@@ -49,8 +49,8 @@ class _ProFilePageState extends State<ProFilePage> {
   }
 
   Future<void> loadSettings() async {
-
-    final url = Uri.parse('http://192.168.184.212:8080/load/alarmSetting'); // 설정 서버 주소 추가
+    final url = Uri.parse(
+        'http://172.24.4.212:8080/load/alarmSetting'); // 설정 서버 주소 추가
     try {
       final response = await http.post(
         url,
@@ -76,8 +76,8 @@ class _ProFilePageState extends State<ProFilePage> {
   } // 유저 설정 불러오는 함수(서버)
 
   Future<void> loadInfo() async {
-
-    final url = Uri.parse('http://192.168.184.212:8080/load/userInfo'); // 유저 정보 서버 주소 추가
+    final url = Uri.parse(
+        'http://172.24.4.212:8080/load/userInfo'); // 유저 정보 서버 주소 추가
     try {
       final response = await http.post(
         url,
@@ -102,9 +102,7 @@ class _ProFilePageState extends State<ProFilePage> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('userId');
     Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => SignInPage())
-    );
+        context, MaterialPageRoute(builder: (context) => SignInPage()));
   } // 로그아웃 함수
 
   Future<void> deleteAccount(BuildContext context) async {
@@ -162,7 +160,8 @@ class _ProFilePageState extends State<ProFilePage> {
       String? uploadUrl = await getUploadUrl(userId, fileName);
 
       if (uploadUrl != null) {
-        await uploadImageToUrl(_image!, uploadUrl);
+        await uploadImageToUrl(uploadUrl, _image!);
+        print('File name: $fileName');
       } else {
         print('Failed to retrieve upload URL.');
       }
@@ -170,26 +169,32 @@ class _ProFilePageState extends State<ProFilePage> {
   }
 
   void showPicker(BuildContext context) {
-    showModalBottomSheet(context: context, builder: (BuildContext context) {
-      return SafeArea(child: Wrap(
-        children: [
-          ListTile(
-              title: Text('카메라로 촬영'), onTap: () {
-            pickImage(ImageSource.camera);
-            Navigator.pop(context);
-          }),
-          ListTile(
-              title: Text('갤러리에서 선택'), onTap: () {
-            pickImage(ImageSource.gallery);
-            Navigator.pop(context);
-          }),
-          ListTile(
-              title: Text('취소'), onTap: () {
-            Navigator.pop(context);
-          }),
-        ],
-      ));
-    });
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return SafeArea(
+              child: Wrap(
+            children: [
+              ListTile(
+                  title: Text('카메라로 촬영'),
+                  onTap: () {
+                    pickImage(ImageSource.camera);
+                    Navigator.pop(context);
+                  }),
+              ListTile(
+                  title: Text('갤러리에서 선택'),
+                  onTap: () {
+                    pickImage(ImageSource.gallery);
+                    Navigator.pop(context);
+                  }),
+              ListTile(
+                  title: Text('취소'),
+                  onTap: () {
+                    Navigator.pop(context);
+                  }),
+            ],
+          ));
+        });
   } // 사진 촬영 or 갤러리 선택
 
   bool reqNotifications = false;
@@ -202,24 +207,24 @@ class _ProFilePageState extends State<ProFilePage> {
       sendUserId(userId, 'friend/request');
     });
   }
+
   void toggleFriNotifications(bool? value) {
     setState(() {
       friNotifications = value ?? false;
       sendUserId(userId, 'friend/alarm');
-
     });
   }
+
   void toggleAllNotifications(bool? value) {
     setState(() {
       allNotifications = value ?? false;
       sendUserId(userId, 'entire/alarm');
-
     });
   }
 
   Future<String> getUploadUrl(String userId, String fileName) async {
     final response = await http.post(
-      Uri.parse('http://192.168.184.212:8080/upload/profile'),
+      Uri.parse('http://172.24.4.212:8080/upload/profile'),
       headers: {'Content-Type': 'application/json'},
       body: '{"userId": "$userId", "fileName": "$fileName"}',
     );
@@ -227,21 +232,26 @@ class _ProFilePageState extends State<ProFilePage> {
     if (response.statusCode == 200) {
       return response.body;
     } else {
-      throw Exception('Failed to upload file: ${response.reasonPhrase}'); // 예외 던지기
+      throw Exception(
+          'Failed to upload file: ${response.reasonPhrase}'); // 예외 던지기
     }
   } // 프로필 사진 업로드할 서버 주소 받아오기
 
-  Future<void> uploadImageToUrl(File image, String uploadUrl) async {
-    Dio dio = Dio();
+  Future<void> uploadImageToUrl(String uploadUrl, File image) async {
+    final mimeTypeData = lookupMimeType(image.path, headerBytes: [0xFF, 0xD8])?.split('/');
 
     try {
-      String fileName = image.path.split('/').last;
+      final request = http.MultipartRequest('PUT', Uri.parse(uploadUrl));
 
-      FormData formData = FormData.fromMap({
-        "file": await MultipartFile.fromFile(image.path, filename: fileName),
-      });
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'file',
+          image.path,
+          contentType: MediaType(mimeTypeData![0], mimeTypeData[1]), // MIME 타입 설정
+        ),
+      );
 
-      Response response = await dio.put(uploadUrl, data: formData);
+      final response = await request.send();
 
       if (response.statusCode == 200) {
         print('Image uploaded successfully.');
@@ -309,7 +319,6 @@ class _ProFilePageState extends State<ProFilePage> {
 
   @override
   Widget build(BuildContext context) {
-
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -329,8 +338,7 @@ class _ProFilePageState extends State<ProFilePage> {
                 Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
-                      color: Color(0xff3f3f3f)
-                  ),
+                      color: Color(0xff3f3f3f)),
                   child: Row(
                     children: [
                       Stack(
@@ -339,25 +347,43 @@ class _ProFilePageState extends State<ProFilePage> {
                           Padding(
                             padding: EdgeInsets.all(size.width * 0.05),
                             child: CircleAvatar(
-                              radius: size.width * 0.2, backgroundImage: _image != null
-                                ? FileImage(_image!)
-                                : const AssetImage('hanni.jpg') as ImageProvider,
+                              radius: size.width * 0.2,
+                              backgroundImage: _image != null
+                                  ? FileImage(_image!)
+                                  : const AssetImage('hanni.jpg')
+                                      as ImageProvider,
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.all(size.width * 0.025),
-                            child: ElevatedButton(style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.all(size.width * 0.025),backgroundColor: Colors.grey, shape: CircleBorder(), side: BorderSide(color: Colors.white, width: 3)),
-                                onPressed: () => showPicker(context),
-                                child: Icon(Icons.camera_alt, color: Colors.white, size: size.width * 0.075))
-                          )
+                              padding: EdgeInsets.all(size.width * 0.025),
+                              child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      padding:
+                                          EdgeInsets.all(size.width * 0.025),
+                                      backgroundColor: Colors.grey,
+                                      shape: CircleBorder(),
+                                      side: BorderSide(
+                                          color: Colors.white, width: 3)),
+                                  onPressed: () => showPicker(context),
+                                  child: Icon(Icons.camera_alt,
+                                      color: Colors.white,
+                                      size: size.width * 0.075)))
                         ],
                       ),
-                      SizedBox(width: size.width * 0.03,),
+                      SizedBox(
+                        width: size.width * 0.03,
+                      ),
                       Column(
                         children: [
-                          Text('User Name', style: TextStyle(color: Colors.white, fontSize: size.width * 0.06, fontWeight: FontWeight.bold)),
-                          Text('ID', style: TextStyle(color: Colors.white, fontSize: size.width * 0.05))
+                          Text('User Name',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: size.width * 0.06,
+                                  fontWeight: FontWeight.bold)),
+                          Text('ID',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: size.width * 0.05))
                         ],
                       )
                     ],
@@ -365,35 +391,60 @@ class _ProFilePageState extends State<ProFilePage> {
                 ),
                 Padding(
                   padding: EdgeInsets.all(size.width * 0.025),
-                  child: Text('알림', style: TextStyle(fontSize: size.width * 0.04, color: Colors.grey, fontWeight: FontWeight.bold)),
+                  child: Text('알림',
+                      style: TextStyle(
+                          fontSize: size.width * 0.04,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold)),
                 ),
                 Container(
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Color(0xff3f3f3f)),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: Color(0xff3f3f3f)),
                   child: Column(
                     children: [
                       ListTile(
                         leading: Icon(Icons.group, color: Colors.white),
-                        title: Text('친구 요청', style: TextStyle(color: Colors.white)),
+                        title: Text('친구 요청',
+                            style: TextStyle(color: Colors.white)),
                         trailing: CupertinoSwitch(
                           value: reqNotifications,
                           activeColor: Colors.black,
                           onChanged: toggleReqNotifications,
                         ),
                       ),
-                      Divider(height: 1, color: Colors.grey,indent: size.width * 0.025, endIndent: size.width * 0.025),
+                      Divider(
+                          height: 1,
+                          color: Colors.grey,
+                          indent: size.width * 0.025,
+                          endIndent: size.width * 0.025),
                       ListTile(
-                        leading: Icon(Icons.person, color: Colors.white,),
-                        title: Text('친구 알림', style: TextStyle(color: Colors.white)),
+                        leading: Icon(
+                          Icons.person,
+                          color: Colors.white,
+                        ),
+                        title: Text('친구 알림',
+                            style: TextStyle(color: Colors.white)),
                         trailing: CupertinoSwitch(
                           value: friNotifications,
                           activeColor: Colors.black,
                           onChanged: toggleFriNotifications,
                         ),
                       ),
-                      Divider(height: 1, color: Colors.grey,indent: size.width * 0.025, endIndent: size.width * 0.025),
+                      Divider(
+                          height: 1,
+                          color: Colors.grey,
+                          indent: size.width * 0.025,
+                          endIndent: size.width * 0.025),
                       ListTile(
-                        leading: Icon(Icons.notifications, color: Colors.white,),
-                        title: Text('전체 알림', style: TextStyle(color: Colors.white),),
+                        leading: Icon(
+                          Icons.notifications,
+                          color: Colors.white,
+                        ),
+                        title: Text(
+                          '전체 알림',
+                          style: TextStyle(color: Colors.white),
+                        ),
                         trailing: CupertinoSwitch(
                           value: allNotifications,
                           activeColor: Colors.black,
@@ -405,27 +456,56 @@ class _ProFilePageState extends State<ProFilePage> {
                 ),
                 Padding(
                   padding: EdgeInsets.all(size.width * 0.025),
-                  child: Text('개인정보', style: TextStyle(fontSize: size.width * 0.04, color: Colors.grey, fontWeight: FontWeight.bold)),
+                  child: Text('개인정보',
+                      style: TextStyle(
+                          fontSize: size.width * 0.04,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold)),
                 ),
                 Container(
                   width: double.infinity,
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), color: Color(0xff3f3f3f)),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: Color(0xff3f3f3f)),
                   child: Column(
                     children: [
-                      ListTile(onTap: () {}, dense: true,
-                        title: Text('이메일', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
-                        subtitle: Text(userInfo['userEmail'] ?? '이메일 없음', style: TextStyle(color: Colors.grey))
-                      ),
-                      Divider(height: 1,color: Colors.grey, indent: size.width * 0.025, endIndent: size.width * 0.025),
-                      ListTile(onTap: () {}, dense: true,
-                          title: Text('전화번호', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
-                          subtitle: Text(userInfo['userPhone'] ?? '전화번호 없음', style: TextStyle(color: Colors.grey))
-                      ),
-                      Divider(height: 1, color: Colors.grey, indent: size.width * 0.025, endIndent: size.width * 0.025),
-                      ListTile(onTap: () {}, dense: true,
-                          title: Text('생년월일', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
-                          subtitle: Text(userInfo['birthday'] ?? '생년월일 없음', style: TextStyle(color: Colors.grey))
-          ),
+                      ListTile(
+                          onTap: () {},
+                          dense: true,
+                          title: Text('이메일',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: size.width * 0.045)),
+                          subtitle: Text(userInfo['userEmail'] ?? '이메일 없음',
+                              style: TextStyle(color: Colors.grey))),
+                      Divider(
+                          height: 1,
+                          color: Colors.grey,
+                          indent: size.width * 0.025,
+                          endIndent: size.width * 0.025),
+                      ListTile(
+                          onTap: () {},
+                          dense: true,
+                          title: Text('전화번호',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: size.width * 0.045)),
+                          subtitle: Text(userInfo['userPhone'] ?? '전화번호 없음',
+                              style: TextStyle(color: Colors.grey))),
+                      Divider(
+                          height: 1,
+                          color: Colors.grey,
+                          indent: size.width * 0.025,
+                          endIndent: size.width * 0.025),
+                      ListTile(
+                          onTap: () {},
+                          dense: true,
+                          title: Text('생년월일',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: size.width * 0.045)),
+                          subtitle: Text(userInfo['birthday'] ?? '생년월일 없음',
+                              style: TextStyle(color: Colors.grey))),
                     ],
                   ),
                 ),
@@ -435,24 +515,41 @@ class _ProFilePageState extends State<ProFilePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ElevatedButton(onPressed: () {
-                        deleteAccountConfirm(context);
-                      }, style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), backgroundColor: Color(0xff3f3f3f),
-                        minimumSize: Size(size.width * 0.45, size.height * 0.075), alignment: Alignment.center),
-                        child: Text('계정 삭제', style: TextStyle(color: Colors.white),)),
-                    ElevatedButton(onPressed: () {
-                      logoutConfirm(context);
-                    }, style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)), backgroundColor: Color(0xff3f3f3f),
-                        minimumSize: Size(size.width * 0.45, size.height * 0.075), alignment: Alignment.center),
-                        child: Text('로그아웃', style: TextStyle(color: Colors.red),)),
+                    ElevatedButton(
+                        onPressed: () {
+                          deleteAccountConfirm(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30)),
+                            backgroundColor: Color(0xff3f3f3f),
+                            minimumSize:
+                                Size(size.width * 0.45, size.height * 0.075),
+                            alignment: Alignment.center),
+                        child: Text(
+                          '계정 삭제',
+                          style: TextStyle(color: Colors.white),
+                        )),
+                    ElevatedButton(
+                        onPressed: () {
+                          logoutConfirm(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30)),
+                            backgroundColor: Color(0xff3f3f3f),
+                            minimumSize:
+                                Size(size.width * 0.45, size.height * 0.075),
+                            alignment: Alignment.center),
+                        child: Text(
+                          '로그아웃',
+                          style: TextStyle(color: Colors.red),
+                        )),
                   ],
                 )
               ],
             ),
           ),
-        )
-    );
+        ));
   }
 }

@@ -17,7 +17,7 @@ class _HomePageState extends State<HomePage> {
   final String userId = "user1"; // 유저 아이디 임시로 저장
 
   Future<void> loadPosts() async {
-    final url = Uri.parse('http://localhost:8080/load/posts/home');
+    final url = Uri.parse('http://192.168.63.212:8080/load/posts/home');
     try {
       final response = await http.post(
         url,

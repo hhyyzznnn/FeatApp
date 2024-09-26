@@ -42,8 +42,7 @@ dependencies:
   flutter_sound: ^9.1.7
   mime:
   http_parser:
-  shared_preferences: 
-
+  shared_preferences: ^2.3.2
 
 
   # The following adds the Cupertino Icons font to your application.

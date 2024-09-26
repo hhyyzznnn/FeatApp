@@ -288,50 +288,61 @@ class SoundWaveform extends StatefulWidget {
 
 class _SoundWaveformState extends State<SoundWaveform> with TickerProviderStateMixin {
   late AnimationController controller;
-  final int count = 30;  // 막대 개수
-  final double minHeight = 10.0;  // 최소 높이
-  final double maxHeight = 50.0;  // 최대 높이
-  List<double> amplitudes = List.filled(30, 10.0);  // 파형 높이 저장
-  FlutterSoundPlayer? _player;
+  final int count = 30; // Number of bars
+  final double minHeight = 10.0; // Minimum bar height
+  final double maxHeight = 50.0; // Maximum bar height
+  List<double> amplitudes = List.filled(30, 10.0); // Initial waveform heights
+  AudioPlayer _audioPlayer = AudioPlayer();
   Random random = Random();
+  bool isPlaying = false;
 
   @override
   void initState() {
     super.initState();
     controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000),  // 애니메이션 속도
+      duration: const Duration(milliseconds: 1000), // Animation speed
     )..repeat();
 
-    _player = FlutterSoundPlayer();
-    startAudio(); // 오디오 재생 시작
+    startAudio(); // Start audio playback
   }
 
   @override
   void dispose() {
     controller.dispose();
-    _player?.closePlayer();  // 리소스 정리
+    _audioPlayer.dispose(); // Dispose of audio player resources
     super.dispose();
   }
 
-  // 오디오 재생 및 시각화 시작
+  // Start audio playback and visualization
   Future<void> startAudio() async {
-    await _player!.openPlayer();
-    await _player!.startPlayer(
-      fromURI: 'assets/your_audio_file.mp3', // 오디오 파일 경로 지정
-      codec: Codec.mp3,
-      whenFinished: () {
-        setState(() {
-          _player!.stopPlayer();
-        });
-      },
-    );
+    // Set the audio player mode to low latency for quick start and stop
+    await _audioPlayer.setReleaseMode(ReleaseMode.stop);
 
-    // 주기적으로 임의의 파형 높이를 업데이트
-    _player!.onProgress!.listen((e) {
+    // Start playing the audio file from assets
+    int result = await _audioPlayer.play('assets/your_audio_file.mp3', isLocal: true);
+
+    if (result == 1) {
       setState(() {
-        // 랜덤하게 막대 높이를 업데이트
-        amplitudes = List.generate(count, (i) => minHeight + random.nextDouble() * (maxHeight - minHeight));
+        isPlaying = true;
+      });
+    }
+
+    // Listen to the audio player's position stream to update the waveform
+    _audioPlayer.onAudioPositionChanged.listen((duration) {
+      if (isPlaying) {
+        setState(() {
+          // Randomly update bar heights
+          amplitudes = List.generate(count, (i) => minHeight + random.nextDouble() * (maxHeight - minHeight));
+        });
+      }
+    });
+
+    // Handle when the audio is finished playing
+    _audioPlayer.onPlayerCompletion.listen((_) {
+      setState(() {
+        isPlaying = false;
+        _audioPlayer.stop();
       });
     });
   }
@@ -344,14 +355,14 @@ class _SoundWaveformState extends State<SoundWaveform> with TickerProviderStateM
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: List.generate(count, (i) {
-            double height = amplitudes[i];  // 랜덤 높이 설정
+            double height = amplitudes[i]; // Set random height
             return AnimatedContainer(
               duration: const Duration(milliseconds: 500),
               margin: i == (count - 1) ? EdgeInsets.zero : const EdgeInsets.only(right: 5),
               height: height,
-              width: 6,  // 막대 너비
+              width: 6, // Bar width
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.6 + 0.4 * controller.value),  // 동적으로 색상 변경
+                color: Colors.white.withOpacity(0.6 + 0.4 * controller.value), // Change color dynamically
                 borderRadius: BorderRadius.circular(9999),
               ),
             );

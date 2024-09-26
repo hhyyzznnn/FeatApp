@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ootdHomePage extends StatelessWidget {
-  ootdHomePage({Key? key, this.year, this.month, this.day}) : super(key:key);
+  ootdHomePage({super.key, this.year, this.month, this.day});
 
   var year;
   var month;
@@ -19,7 +19,7 @@ class ootdHomePage extends StatelessWidget {
           backgroundColor: Colors.white,
           title: Text('Feat.',
               style: TextStyle(
-                  fontSize: size.height * 0.035,
+                  fontSize: size.height * 0.04,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87)),
           actions: [
@@ -57,7 +57,7 @@ class ootdHomePage extends StatelessWidget {
 
 
 class ootdBody extends StatelessWidget {
-  ootdBody({Key? key, this.year, this.month, this.day}) : super(key:key);
+  ootdBody({super.key, this.year, this.month, this.day});
 
   var year;
   var month;

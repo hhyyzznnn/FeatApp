@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter_sound/flutter_sound.dart';
+import 'package:audioplayer/audio_cache.dart'
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -135,6 +136,7 @@ class _HomePageState extends State<HomePage> {
                           fontSize: size.width * 0.04,
                           height: size.height * 0.0035)),
                   Stack(
+                    alignment: Alignment.center,
                     children: [
                       Container(
                           height: size.height * 0.06,

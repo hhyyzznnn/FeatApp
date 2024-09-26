@@ -36,8 +36,7 @@ dependencies:
   flutter_svg:
   camera:
   path_provider:
-  audioplayers: ^6.1.0
-  audioplayer: ^0.8.1
+  audioplayers: ^0.20.1
   flutter_screenutil: ^5.8.4
   flutter_sound: ^9.1.7
   mime:

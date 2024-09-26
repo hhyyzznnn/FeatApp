@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:camera/camera.dart';
 import 'screens/home.dart';
 import 'screens/profile.dart';
 import 'screens/signup.dart';
@@ -10,7 +11,12 @@ import 'screens/calender.dart';
 import 'screens/friendpage.dart';
 import 'screens/ootd.dart';
 
-void main() {
+late List<CameraDescription> cameras;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Flutter 엔진이 초기화되었는지 확인
+  cameras = await availableCameras(); // 사용 가능한 카메라 목록을 가져옵니다.
+
   runApp(const FeatApp());
 }
 
@@ -42,7 +48,7 @@ class FeatApp extends StatelessWidget {
         'profile': (context) => ProFilePage(),
         'signup': (context) => SignUpPage(),
         'signin': (context) => SignInPage(),
-        'camera': (context) => CameraPage(),
+        'camera': (context) => CameraPage(camera: cameras.first),
         'alarm' : (context) => AlarmPage(),
         'home' : (context) => HomePage(),
         'calender' : (context) => CalenderPage(),

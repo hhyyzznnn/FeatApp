@@ -118,7 +118,7 @@ class _HomePageState extends State<HomePage> {
                             ],
                           )
                       ),
-                      SoundWaveform()
+                      Center(child: SoundWaveform())
                     ],
                   )
                 ],
@@ -312,14 +312,6 @@ class _SoundWaveformState extends State<SoundWaveform> with TickerProviderStateM
               decoration: BoxDecoration(
                 color: Colors.blueAccent.withOpacity(0.6 + 0.4 * controller.value),  // 동적으로 색상 변경
                 borderRadius: BorderRadius.circular(9999),
-                gradient: LinearGradient(  // 컬러 그라데이션 적용
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [
-                    Colors.blueAccent,
-                    Colors.greenAccent.withOpacity(controller.value),
-                  ],
-                ),
               ),
             );
           }),

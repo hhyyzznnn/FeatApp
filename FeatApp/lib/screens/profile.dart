@@ -23,13 +23,33 @@ class _ProFilePageState extends State<ProFilePage> {
   final ImagePicker picker = ImagePicker();
 
   Map userSetting = {}; // 유저 세팅을 저장할 맵
-  Map userInfo = {}; // 유저 정보를 저장할 리스트
+  Map userInfo = {}; // 유저 정보를 저장할 맵
 
   final String userId = "user1"; // 임의로 작성한 유저 아이디
 
+  Future<void> sendUserId(String userId, String endpoint) async {
+    final url = Uri.parse('http://192.168.63.212:8080/edit/$endpoint'); // 엔드포인트를 변수로 사용
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"userId": userId}),
+      );
+
+      if (response.statusCode == 200) {
+        print('User ID sent successfully');
+      } else {
+        print('Failed to send User ID: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   Future<void> loadSettings() async {
 
-    final url = Uri.parse('http://localhost:8080/load/alarmSetting'); // 설정 서버 주소 추가
+    final url = Uri.parse('http://192.168.63.212:8080/load/alarmSetting'); // 설정 서버 주소 추가
     try {
       final response = await http.post(
         url,
@@ -56,7 +76,7 @@ class _ProFilePageState extends State<ProFilePage> {
 
   Future<void> loadInfo() async {
 
-    final url = Uri.parse('http://localhost:8080/load/userInfo'); // 유저 정보 서버 주소 추가
+    final url = Uri.parse('http://192.168.63.212:8080/load/userInfo'); // 유저 정보 서버 주소 추가
     try {
       final response = await http.post(
         url,
@@ -178,41 +198,37 @@ class _ProFilePageState extends State<ProFilePage> {
   void toggleReqNotifications(bool? value) {
     setState(() {
       reqNotifications = value ?? false;
+      sendUserId(userId, 'friend/request');
     });
   }
   void toggleFriNotifications(bool? value) {
     setState(() {
       friNotifications = value ?? false;
+      sendUserId(userId, 'friend/alarm');
+
     });
   }
   void toggleAllNotifications(bool? value) {
     setState(() {
       allNotifications = value ?? false;
+      sendUserId(userId, 'entire/alarm');
+
     });
   }
 
-  Future<String?> getUploadUrl(String userId, String fileName) async {
-    final url = Uri.parse('http://localhost:8080/upload/profile');
+  Future<String> getUploadUrl(String userId, String fileName) async {
+    final response = await http.post(
+      Uri.parse('http://192.168.63.212:8080/upload/profile'),
+      headers: {'Content-Type': 'application/json'},
+      body: '{"userId": "$userId", "fileName": "$fileName"}',
+    );
 
-    try {
-      final response = await http.post(
-        url,
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"userId": userId, "fileName": fileName}),
-      );
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
-        return responseData;
-      } else {
-        print('Failed to get upload URL: ${response.statusCode}');
-        return null;
-      }
-    } catch (e) {
-      print('Error: $e');
-      return null;
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {
+      throw Exception('Failed to upload file: ${response.reasonPhrase}'); // 예외 던지기
     }
-  }
+  } // 프로필 사진 업로드할 서버 주소 받아오기
 
   Future<void> uploadImageToUrl(String uploadUrl, File image) async {
     final mimeTypeData = lookupMimeType(image.path, headerBytes: [0xFF, 0xD8])?.split('/');
@@ -238,7 +254,7 @@ class _ProFilePageState extends State<ProFilePage> {
     } catch (e) {
       print('Error: $e');
     }
-  }
+  } // 프로필 사진 업로드
 
   void logoutConfirm(BuildContext context) {
     showDialog(
@@ -328,7 +344,7 @@ class _ProFilePageState extends State<ProFilePage> {
                             child: CircleAvatar(
                               radius: size.width * 0.2, backgroundImage: _image != null
                                 ? FileImage(_image!)
-                                : const AssetImage('hanni.jpeg') as ImageProvider,
+                                : const AssetImage('hanni.jpg') as ImageProvider,
                             ),
                           ),
                           Padding(
@@ -401,17 +417,17 @@ class _ProFilePageState extends State<ProFilePage> {
                     children: [
                       ListTile(onTap: () {}, dense: true,
                         title: Text('이메일', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
-                        subtitle: Text(userInfo['userEmail'], style: TextStyle(color: Colors.grey))
+                        subtitle: Text(userInfo['userEmail'] ?? '이메일 없음', style: TextStyle(color: Colors.grey))
                       ),
                       Divider(height: 1,color: Colors.grey, indent: size.width * 0.025, endIndent: size.width * 0.025),
                       ListTile(onTap: () {}, dense: true,
                           title: Text('전화번호', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
-                          subtitle: Text(userInfo['userPhone'], style: TextStyle(color: Colors.grey))
+                          subtitle: Text(userInfo['userPhone'] ?? '전화번호 없음', style: TextStyle(color: Colors.grey))
                       ),
                       Divider(height: 1, color: Colors.grey, indent: size.width * 0.025, endIndent: size.width * 0.025),
                       ListTile(onTap: () {}, dense: true,
                           title: Text('생년월일', style: TextStyle(color: Colors.white, fontSize: size.width * 0.045)),
-                          subtitle: Text(userInfo['birthday'], style: TextStyle(color: Colors.grey))
+                          subtitle: Text(userInfo['birthday'] ?? '생년월일 없음', style: TextStyle(color: Colors.grey))
           ),
                     ],
                   ),

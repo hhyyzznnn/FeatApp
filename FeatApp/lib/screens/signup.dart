@@ -73,15 +73,6 @@ class _SignState extends State<Sign> {
       "pw": pw,
       "pwCheck": pwCheck
     };
-
-    final http.Response response = await http.post(
-      Uri.parse(''),
-      headers: <String, String>{
-        '': '',
-      },
-      body: jsonEncode(data),
-    );
-
   }
 
   String? errorMessage;

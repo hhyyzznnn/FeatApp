@@ -17,7 +17,7 @@ class _HomePageState extends State<HomePage> {
   final String userId = "user1"; // 유저 아이디 임시로 저장
 
   Future<void> loadPosts() async {
-    final url = Uri.parse('http://localhost:8080/load/posts/home');
+    final url = Uri.parse('http://192.168.63.212:8080/load/posts/home');
     try {
       final response = await http.post(
         url,
@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
           backgroundColor: Colors.white,
           title: Text('Feat.',
               style: TextStyle(
-                  fontSize: size.height * 0.035,
+                  fontSize: size.height * 0.04,
                   fontWeight: FontWeight.bold,
                   color: Color(0xff3F3F3F))),
           actions: [
@@ -118,7 +118,7 @@ class _HomePageState extends State<HomePage> {
                             ],
                           )
                       ),
-                      SoundWaveform()
+                      Center(child: SoundWaveform())
                     ],
                   )
                 ],
@@ -140,16 +140,22 @@ class _HomePageState extends State<HomePage> {
                           color: Color(0xff000000).withOpacity(0.25),
                           spreadRadius: 0,
                           blurRadius: 10,
-                          offset: Offset(0, 4)
+                          offset: Offset(0, 4),
                         ),
                       ],
                     ),
-                    child: imageUrl != null
-                    ? Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover, // 이미지가 컨테이너에 맞게 조정됨
-                  )
-                      : Center(child: Text('No Image')), // 이미지가 없을 때,
+                    child: ClipRRect(  // 경계에 맞게 자르기
+                      borderRadius: BorderRadius.circular(10),
+                      child: AspectRatio(
+                        aspectRatio: 16 / 9,
+                        child: imageUrl != null
+                            ? Image.network(
+                          imageUrl,
+                          fit: BoxFit.cover,
+                        )
+                            : Center(child: Text('No Image'))
+                      ),
+                    ),
                   );
                 },
               ),
@@ -209,12 +215,12 @@ class _HomePageState extends State<HomePage> {
                     Navigator.pushNamed(context, 'camera');
                   },
                   child: Container(
-                    width: 120,
-                    height: 120,
+                    width: size.width * 0.275,
+                    height: size.width * 0.275,
                     decoration: BoxDecoration(
                       color: Color(0xff3f3f3f),
                       borderRadius: BorderRadius.circular(60),
-                      border: Border.all(width: size.width * 0.025, color: Colors.white),
+                      border: Border.all(width: size.width * 0.015, color: Colors.white),
                       boxShadow: [
                         BoxShadow(
                             color: Color(0xff000000).withOpacity(0.25),
@@ -303,7 +309,6 @@ class _SoundWaveformState extends State<SoundWaveform> with TickerProviderStateM
           mainAxisSize: MainAxisSize.min,
           children: List.generate(count, (i) {
             double height = amplitudes[i];  // 랜덤 높이 설정
-
             return AnimatedContainer(
               duration: const Duration(milliseconds: 500),
               margin: i == (count - 1) ? EdgeInsets.zero : const EdgeInsets.only(right: 5),
@@ -312,14 +317,6 @@ class _SoundWaveformState extends State<SoundWaveform> with TickerProviderStateM
               decoration: BoxDecoration(
                 color: Colors.blueAccent.withOpacity(0.6 + 0.4 * controller.value),  // 동적으로 색상 변경
                 borderRadius: BorderRadius.circular(9999),
-                gradient: LinearGradient(  // 컬러 그라데이션 적용
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [
-                    Colors.blueAccent,
-                    Colors.greenAccent.withOpacity(controller.value),
-                  ],
-                ),
               ),
             );
           }),

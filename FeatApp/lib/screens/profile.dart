@@ -228,7 +228,7 @@ class _ProFilePageState extends State<ProFilePage> {
     } else {
       throw Exception('Failed to upload file: ${response.reasonPhrase}'); // 예외 던지기
     }
-  }
+  } // 프로필 사진 업로드할 서버 주소 받아오기
 
   Future<void> uploadImageToUrl(String uploadUrl, File image) async {
     final mimeTypeData = lookupMimeType(image.path, headerBytes: [0xFF, 0xD8])?.split('/');
@@ -254,7 +254,7 @@ class _ProFilePageState extends State<ProFilePage> {
     } catch (e) {
       print('Error: $e');
     }
-  }
+  } // 프로필 사진 업로드
 
   void logoutConfirm(BuildContext context) {
     showDialog(
@@ -344,7 +344,7 @@ class _ProFilePageState extends State<ProFilePage> {
                             child: CircleAvatar(
                               radius: size.width * 0.2, backgroundImage: _image != null
                                 ? FileImage(_image!)
-                                : const AssetImage('hanni.jpeg') as ImageProvider,
+                                : const AssetImage('hanni.jpg') as ImageProvider,
                             ),
                           ),
                           Padding(

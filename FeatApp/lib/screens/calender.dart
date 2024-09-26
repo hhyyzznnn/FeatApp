@@ -80,8 +80,8 @@ class _CalenderDate extends State<CalenderDate> {
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: Colors.white),
             child: Align
               (
-                child: Text(widget.day.toString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
-                alignment: Alignment.center
+                alignment: Alignment.center,
+                child: Text(widget.day.toString(), style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500))
             )
         ),
       );
@@ -166,8 +166,8 @@ class _CalenderHomePageState extends State<CalenderHomePage> {
                   child: Text('${yearAndMonth(index, widget.startYear, widget.startMonth)[0]}__${yearAndMonth(index, widget.startYear, widget.startMonth)[1]}' , style: TextStyle(fontSize: 25, fontWeight: FontWeight.w600)),
                 )
             ),
-            SizedBox(child: CalendarBar(), width: 450, height: 70),
-            SizedBox(child: CalendarDateGridView(index: index), width: 450, height: 340)
+            SizedBox(width: 450, height: 70, child: CalendarBar()),
+            SizedBox(width: 450, height: 340, child: CalendarDateGridView(index: index))
           ]
           );
         }
@@ -180,7 +180,7 @@ class _CalenderHomePageState extends State<CalenderHomePage> {
 // 최대 6주 이므로 6 * 7로 구성
 
 class CalendarDateGridView extends StatefulWidget {
-  CalendarDateGridView({Key? key, this.index}) : super(key:key);
+  CalendarDateGridView({super.key, this.index});
 
   var index;
   var startYear = 2024;
@@ -306,12 +306,12 @@ class CalendarBar extends StatelessWidget {
         itemBuilder: (context, index){
           return Container(
               width: 50, height: 50,
-              child: Align(
-                  child: Text(date[index], style: TextStyle(fontSize: 20)),
-                  alignment: Alignment.center
-              ),
               margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white)
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white),
+              child: Align(
+                  alignment: Alignment.center,
+                  child: Text(date[index], style: TextStyle(fontSize: 20))
+              )
           );
         },
 

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'home.dart';
 import 'package:feat/utils/appbar.dart';
 
 class MusicRecPage extends StatefulWidget {
@@ -113,7 +112,7 @@ class _MusicRecPageState extends State<MusicRecPage> {
           // 음악 재생 버튼
           Align(
             alignment: Alignment(0, 0.65),
-            child: Container(
+            child: SizedBox(
               width: size.width * 0.65,
               height: size.height * 0.13,
               child: Row(
@@ -143,7 +142,7 @@ class _MusicRecPageState extends State<MusicRecPage> {
           // 음악 볼륨 조정
           Align(
             alignment: Alignment(0, 0.8),
-            child: Container(
+            child: SizedBox(
               width: size.width * 0.9,
               height: size.height * 0.05,
               child: Row(
@@ -292,7 +291,7 @@ class _MusicRecPageState extends State<MusicRecPage> {
           // music list
           Align(
             alignment: Alignment(0, -0.3),
-            child: Container(
+            child: SizedBox(
               width: size.width * 0.88,
               height: size.height * 0.4,
               child: ListView.builder(
@@ -372,7 +371,7 @@ class _MusicRecPageState extends State<MusicRecPage> {
           ),
           Align(
             alignment: Alignment(0, 0.45),
-            child: Container(
+            child: SizedBox(
               width: size.width * 0.9,
               height: size.height * 0.04,
               child: Stack(

@@ -74,6 +74,7 @@ class _FriendPageState extends State<FriendPage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+          backgroundColor: Colors.white,
         appBar: buildAppBar(context, '친구'),
         body: Column(
           children: [
@@ -119,6 +120,9 @@ class Search extends StatefulWidget {
 class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
+
+    final size = MediaQuery.of(context).size;
+
     return Align(
       alignment: Alignment.topCenter,
       child: Container(

@@ -4,6 +4,8 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:feat/utils/appbar.dart';
 
 class MusicRecPage extends StatefulWidget {
+  const MusicRecPage({super.key});
+
   @override
   _MusicRecPageState createState() => _MusicRecPageState();
 }

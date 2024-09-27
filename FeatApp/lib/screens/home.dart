@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:math';
-import 'package:flutter_sound/flutter_sound.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 
@@ -17,7 +16,7 @@ class _HomePageState extends State<HomePage> {
   List<String?> homePosts = []; // 이미지 URL을 저장할 리스트
   Map ProfileImage = {}; // 유저 정보를 저장할 맵
 
-  
+
   final String userId = "user1"; // 유저 아이디 임시로 저장
 
   Future<void> loadPosts() async {
@@ -292,7 +291,7 @@ class _SoundWaveformState extends State<SoundWaveform> with TickerProviderStateM
   final double minHeight = 10.0; // Minimum bar height
   final double maxHeight = 50.0; // Maximum bar height
   List<double> amplitudes = List.filled(30, 10.0); // Initial waveform heights
-  AudioPlayer _audioPlayer = AudioPlayer();
+  final AudioPlayer _audioPlayer = AudioPlayer();
   Random random = Random();
   bool isPlaying = false;
 
@@ -372,4 +371,3 @@ class _SoundWaveformState extends State<SoundWaveform> with TickerProviderStateM
     );
   }
 }
-

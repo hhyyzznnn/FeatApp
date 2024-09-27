@@ -159,13 +159,9 @@ class _ProFilePageState extends State<ProFilePage> {
 
       String? uploadUrl = await getUploadUrl(userId, fileName);
 
-      if (uploadUrl != null) {
-        await uploadImageToUrl(uploadUrl, _image!);
-        print('File name: $fileName');
-      } else {
-        print('Failed to retrieve upload URL.');
-      }
-    }
+      await uploadImageToUrl(uploadUrl, _image!);
+      print('File name: $fileName');
+        }
   }
 
   void showPicker(BuildContext context) {

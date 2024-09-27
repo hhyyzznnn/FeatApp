@@ -9,7 +9,7 @@ import 'camera_preview.dart';
 
 class CameraPage extends StatefulWidget {
   final CameraDescription camera;
-  const CameraPage({Key? key, required this.camera}) : super(key: key);
+  const CameraPage({super.key, required this.camera});
 
   @override
   _CameraPageState createState() => _CameraPageState();

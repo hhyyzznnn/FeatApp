@@ -5,24 +5,23 @@ import 'screens/home.dart';
 import 'screens/profile.dart';
 import 'screens/signup.dart';
 import 'screens/signin.dart';
+import 'screens/camera.dart';
 import 'screens/alarm.dart';
-import 'screens/camera2.dart';
 import 'screens/calender.dart';
 import 'screens/friendpage.dart';
-import 'screens/music_rec.dart';
 import 'screens/ootd.dart';
 
+late List<CameraDescription> cameras;
+
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final cameras = await availableCameras();
-  final firstCamera = cameras.first;
-  runApp(FeatApp(firstCamera: firstCamera));
+  WidgetsFlutterBinding.ensureInitialized(); // Flutter 엔진이 초기화되었는지 확인
+  cameras = await availableCameras(); // 사용 가능한 카메라 목록을 가져옵니다.
+
+  runApp(const FeatApp());
 }
 
 class FeatApp extends StatelessWidget {
-  final CameraDescription? firstCamera;
-
-  const FeatApp({super.key, this.firstCamera});
+  const FeatApp({super.key});
 
   Future<bool> isLoggedIn() async {
     final prefs = await SharedPreferences.getInstance();
@@ -34,29 +33,28 @@ class FeatApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: FutureBuilder<bool>(
-        future: isLoggedIn(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Scaffold(body: Center(child: CircularProgressIndicator()));
-          } else if (snapshot.hasData && snapshot.data == true) {
-            return HomePage();
-          } else {
-            return SignInPage();
-          }
-        },
-      ),
+        future: isLoggedIn(), builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    else if (snapshot.hasData && snapshot.data == true) {
+      return HomePage();
+    }
+    else {
+      return SignInPage();
+    }},
+    ),
       routes: {
         'profile': (context) => ProFilePage(),
         'signup': (context) => SignUpPage(),
         'signin': (context) => SignInPage(),
-        'camera': (context) => CameraPage(camera: firstCamera),
-        'alarm': (context) => AlarmPage(),
-        'home': (context) => HomePage(),
-        'calender': (context) => CalenderPage(),
-        'friendpage': (context) => FriendPage(),
-        'ootd': (context) => ootdHomePage(),
-        'rec': (context) => MusicRecPage(),
-      },
+        'camera': (context) => CameraPage(camera: cameras.first),
+        'alarm' : (context) => AlarmPage(),
+        'home' : (context) => HomePage(),
+        'calender' : (context) => CalenderPage(),
+        'friendpage' : (context) => FriendPage(),
+        'ootd' : (context) => ootdHomePage(),
+      }
     );
   }
 }

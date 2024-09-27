@@ -70,7 +70,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     loadPosts(); // 페이지가 생성될 때 데이터 로드
-    loadProfile();
   }
 
   @override
@@ -107,23 +106,16 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   Navigator.pushNamed(context, 'profile');
                 },
-                borderRadius: BorderRadius.circular(size.height * 0.03),
-                child: Container(
-                  height: size.height * 0.045,  // 원형을 위한 height
-                  width: size.height * 0.045,   // height와 동일한 width로 설정
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,  // 원형을 보장
-                  ),
-                  child: ClipOval(
-                    child: ProfileImage['profile'] != null && ProfileImage['profile'].isNotEmpty
-                        ? Image.network(
-                      ProfileImage['profile'],
-                      fit: BoxFit.cover,
-                    )
-                        : Icon(
-                      Icons.person,
-                      size: size.height * 0.035,
-                    ),
+                borderRadius: BorderRadius.circular(size.height * 0.02),
+                child: ClipOval(
+                  child: ProfileImage['profile'] != null && ProfileImage['profile'].isNotEmpty
+                      ? Image.network(
+                    ProfileImage['profile'],
+                    fit: BoxFit.cover,
+                  )
+                      : Icon(
+                    Icons.person,
+                    size: size.height * 0.035,
                   ),
                 ),
               ),
@@ -162,7 +154,7 @@ class _HomePageState extends State<HomePage> {
                             ],
                           )
                       ),
-                      Center(child: Text('SoundWave'))
+                      Center(child: SoundWaveform())
                     ],
                   )
                 ],
@@ -172,7 +164,7 @@ class _HomePageState extends State<HomePage> {
               height: size.height * 0.6,
               child: PageView.builder(
                 controller: PageController(viewportFraction: 0.8),
-                itemCount: homePosts.length,
+                itemCount: 50,
                 itemBuilder: (context, index) {
                   final imageUrl = homePosts[index];
                   return Container(
@@ -287,8 +279,6 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-
-/*
 class SoundWaveform extends StatefulWidget {
   const SoundWaveform({super.key});
 
@@ -381,9 +371,5 @@ class _SoundWaveformState extends State<SoundWaveform> with TickerProviderStateM
       },
     );
   }
-<<<<<<< Updated upstream
 }
 
-=======
-} */
->>>>>>> Stashed changes

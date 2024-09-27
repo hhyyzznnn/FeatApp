@@ -24,12 +24,14 @@ class _ProFilePageState extends State<ProFilePage> {
 
   Map userSetting = {}; // 유저 세팅을 저장할 맵
   Map userInfo = {}; // 유저 정보를 저장할 맵
+  Map ProfileImage = {}; // 프로필 사진 주소를 저장할 맵
+
 
   final String userId = "user1"; // 임의로 작성한 유저 아이디
 
   Future<void> sendUserId(String userId, String endpoint) async {
-    final url = Uri.parse(
-        'http://172.24.4.212:8080/edit/$endpoint'); // 엔드포인트를 변수로 사용
+    final url =
+        Uri.parse('http://172.24.4.212:8080/edit/$endpoint'); // 엔드포인트를 변수로 사용
 
     try {
       final response = await http.post(
@@ -49,8 +51,8 @@ class _ProFilePageState extends State<ProFilePage> {
   }
 
   Future<void> loadSettings() async {
-    final url = Uri.parse(
-        'http://172.24.4.212:8080/load/alarmSetting'); // 설정 서버 주소 추가
+    final url =
+        Uri.parse('http://172.24.4.212:8080/load/alarmSetting'); // 설정 서버 주소 추가
     try {
       final response = await http.post(
         url,
@@ -63,7 +65,7 @@ class _ProFilePageState extends State<ProFilePage> {
           userSetting = Map.from(jsonDecode(response.body));
 
           reqNotifications = userSetting['friendRequest'] == 'on';
-          friNotifications = userSetting['friendAlarm'] == 'on';
+          friNotifications = userSetting['freindAlarm'] == 'on';
           allNotifications = userSetting['entireAlarm'] == 'on';
           print(userSetting);
         });
@@ -76,8 +78,8 @@ class _ProFilePageState extends State<ProFilePage> {
   } // 유저 설정 불러오는 함수(서버)
 
   Future<void> loadInfo() async {
-    final url = Uri.parse(
-        'http://172.24.4.212:8080/load/userInfo'); // 유저 정보 서버 주소 추가
+    final url =
+        Uri.parse('http://172.24.4.212:8080/load/userInfo'); // 유저 정보 서버 주소 추가
     try {
       final response = await http.post(
         url,
@@ -97,6 +99,29 @@ class _ProFilePageState extends State<ProFilePage> {
       print('Error: $e');
     }
   } // 유저 정보 불러오는 함수 (서버)
+
+  Future<void> loadProfile() async {
+
+    final url = Uri.parse('http://172.24.4.212:8080/load/userInfo');
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"userId": userId}),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          ProfileImage = Map.from(jsonDecode(response.body)); // JSON 데이터를 리스트로 변환
+          print(ProfileImage);
+        });
+      } else {
+        throw Exception('Failed to load profile image');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  } // 프로필 사진 불러오는 함수 (서버)
 
   Future<void> deleteUserId(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
@@ -140,13 +165,15 @@ class _ProFilePageState extends State<ProFilePage> {
     requestPermissions();
     loadInfo();
     loadSettings();
+    loadProfile();
   }
 
-  Future<void> requestPermissions() async {
-    final camStatus = await Permission.camera.request();
-    final phoStatus = await Permission.photos.request();
-  } // 카메라, 갤러리 권한 (미사용)
+    Future<void> requestPermissions() async {
+      final camStatus = await Permission.camera.request();
+      final phoStatus = await Permission.photos.request();
+    } // 카메라, 갤러리 권한 (미사용)
 
+<<<<<<< Updated upstream
   Future<void> pickImage(ImageSource source) async {
     final pickedFile = await picker.pickImage(source: source);
     if (pickedFile != null) {
@@ -194,8 +221,54 @@ class _ProFilePageState extends State<ProFilePage> {
                   }),
             ],
           ));
+=======
+    Future<void> pickImage(ImageSource source) async {
+      final pickedFile = await picker.pickImage(source: source);
+      if (pickedFile != null) {
+        setState(() {
+          _image = File(pickedFile.path);
+>>>>>>> Stashed changes
         });
-  } // 사진 촬영 or 갤러리 선택
+
+        String fileName = pickedFile.path.split('/').last;
+        print('File name: $fileName');
+
+        String? uploadUrl = await getUploadUrl(userId, fileName);
+
+        await uploadImageToUrl(uploadUrl, _image!);
+        print('File name: $fileName');
+        loadProfile();
+      }
+    }
+
+    void showPicker(BuildContext context) {
+      showModalBottomSheet(
+          context: context,
+          builder: (BuildContext context) {
+            return SafeArea(
+                child: Wrap(
+              children: [
+                ListTile(
+                    title: Text('카메라로 촬영'),
+                    onTap: () {
+                      pickImage(ImageSource.camera);
+                      Navigator.pop(context);
+                    }),
+                ListTile(
+                    title: Text('갤러리에서 선택'),
+                    onTap: () {
+                      pickImage(ImageSource.gallery);
+                      Navigator.pop(context);
+                    }),
+                ListTile(
+                    title: Text('취소'),
+                    onTap: () {
+                      Navigator.pop(context);
+                    }),
+              ],
+            ));
+          });
+    } // 사진 촬영 or 갤러리 선택
 
   bool reqNotifications = false;
   bool friNotifications = false;
@@ -226,7 +299,7 @@ class _ProFilePageState extends State<ProFilePage> {
     final response = await http.post(
       Uri.parse('http://172.24.4.212:8080/upload/profile'),
       headers: {'Content-Type': 'application/json'},
-      body: '{"userId": "$userId", "fileName": "$fileName"}',
+      body: '{"userId": "$userId", "fileName": "$fileName"}'
     );
 
     if (response.statusCode == 200) {
@@ -238,28 +311,28 @@ class _ProFilePageState extends State<ProFilePage> {
   } // 프로필 사진 업로드할 서버 주소 받아오기
 
   Future<void> uploadImageToUrl(String uploadUrl, File image) async {
-    final mimeTypeData = lookupMimeType(image.path, headerBytes: [0xFF, 0xD8])?.split('/');
-
     try {
-      final request = http.MultipartRequest('PUT', Uri.parse(uploadUrl));
+      // 파일의 Content-Type을 파일 확장자로 추론
+      final mimeType = image.path.split('.').last == 'jpg'
+          ? 'image/jpeg'
+          : 'image/${image.path.split('.').last}';
 
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'file',
-          image.path,
-          contentType: MediaType(mimeTypeData![0], mimeTypeData[1]), // MIME 타입 설정
-        ),
+      // presigned URL을 통해 S3에 PUT 요청
+      final response = await http.put(
+        Uri.parse(uploadUrl),
+        headers: {
+          'Content-Type': mimeType, // Content-Type 설정
+        },
+        body: image.readAsBytesSync(), // 파일 데이터를 바이트 배열로 읽어오기
       );
 
-      final response = await request.send();
-
       if (response.statusCode == 200) {
-        print('Image uploaded successfully.');
+        print("Image uploaded successfully");
       } else {
-        print('Failed to upload image: ${response.statusCode}');
+        print("Image upload failed with status: ${response.statusCode}");
       }
     } catch (e) {
-      print('Error: $e');
+      print("Error occurred during image upload: $e");
     }
   }
 
@@ -348,10 +421,11 @@ class _ProFilePageState extends State<ProFilePage> {
                             padding: EdgeInsets.all(size.width * 0.05),
                             child: CircleAvatar(
                               radius: size.width * 0.2,
-                              backgroundImage: _image != null
+                              backgroundImage: ProfileImage['profile'] != null && ProfileImage['profile'].isNotEmpty
+                                  ? NetworkImage(ProfileImage['profile']) as ImageProvider
+                                  : (_image != null
                                   ? FileImage(_image!)
-                                  : const AssetImage('hanni.jpg')
-                                      as ImageProvider,
+                                  : const AssetImage('hanni.jpg')),
                             ),
                           ),
                           Padding(

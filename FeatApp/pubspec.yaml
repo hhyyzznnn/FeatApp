@@ -44,6 +44,7 @@ dependencies:
   shared_preferences: ^2.3.2
   flutter_native_splash: ^2.4.1
   dio:
+  volume_controller:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

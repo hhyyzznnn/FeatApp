@@ -20,6 +20,11 @@ PODS:
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+<<<<<<< Updated upstream
+=======
+  - volume_controller (0.0.1):
+    - Flutter
+>>>>>>> Stashed changes
 
 DEPENDENCIES:
   - audioplayers_darwin (from `.symlinks/plugins/audioplayers_darwin/ios`)
@@ -31,6 +36,10 @@ DEPENDENCIES:
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
+<<<<<<< Updated upstream
+=======
+  - volume_controller (from `.symlinks/plugins/volume_controller/ios`)
+>>>>>>> Stashed changes
 
 SPEC REPOS:
   trunk:
@@ -55,6 +64,11 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
+<<<<<<< Updated upstream
+=======
+  volume_controller:
+    :path: ".symlinks/plugins/volume_controller/ios"
+>>>>>>> Stashed changes
 
 SPEC CHECKSUMS:
   audioplayers_darwin: 877d9a4d06331c5c374595e46e16453ac7eafa40
@@ -67,6 +81,10 @@ SPEC CHECKSUMS:
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
+<<<<<<< Updated upstream
+=======
+  volume_controller: 531ddf792994285c9b17f9d8a7e4dcdd29b3eae9
+>>>>>>> Stashed changes
 
 PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796
 

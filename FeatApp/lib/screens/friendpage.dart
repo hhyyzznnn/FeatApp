@@ -11,64 +11,64 @@ class FriendPage extends StatefulWidget {
 }
 
 class _FriendPageState extends State<FriendPage> {
-  List<String?> friends = [];// 검색된 친구 목록 저장
-  List<String?> searchResults = [];  // 검색된 유저 목록 저장
-  final String userId = "user1";
-  String searchQuery = "";
+  List<Map<String,String>> friends = [];// 검색된 친구 목록 저장
+  List<Map<String,String>> searchResults = [];  // 검색된 유저 목록 저장
+  final String userId = "";
+  final String userName = "";
+  TextEditingController searchController = TextEditingController();  // 검색창 입력 내용
   bool isSearching = false; // 검색 상태를 확인하는 변수
 
-  @override
-  void initState() {
-    super.initState();
-    loadFriends();
-  }
 
-  // 기존 친구 목록을 불러오는 함수
+  // 기존 친구 목록 불러오는 함수
   Future<void> loadFriends() async {
-    final url = Uri.parse('http://172.24.4.212:8080/search/');
-    try {
-      final response = await http.post(
-        url,
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"userId": userId}),
-      );
+    final Map<String, String> friends = {
+    "userName": userName,
+    "userId": userId,
+    };
 
-      if (response.statusCode == 200) {
-        setState(() {
-          friends = List<String?>.from(
-              jsonDecode(response.body));
-          print(friends);
-        });
-      } else {
-        throw Exception('Failed to load friends');
-      }
-    } catch (e) {
-      print('Error: $e');
+    // post 요청 보내기
+    final http.Response response = await http.post(
+    Uri.parse('http://'),
+    headers: <String, String>{
+    'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(friends),
+    );
+
+    if (response.statusCode == 200) {
+
+    } else {
+    throw Exception('Failed to load friends');
     }
   }
+
 
   // 검색어에 맞는 모든 유저를 불러오는 함수
   Future<void> searchUsers(String query) async {
-    final url = Uri.parse('http://172.24.4.212:8080/searchUsers/');
-    try {
-      final response = await http.post(
-        url,
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"query": query}),
-      );
 
-      if (response.statusCode == 200) {
-        setState(() {
-          searchResults = List<String?>.from(jsonDecode(response.body));
-          print(searchResults);
-        });
-      } else {
-        throw Exception('Failed to search users');
-      }
-    } catch (e) {
-      print('Error: $e');
+    final String search = searchController.text;
+
+    final Map<String, String> searchResults = {
+    "userName": userName,
+    "userId": userId,
+    };
+
+    // post 요청 보내기
+    final http.Response response = await http.post(
+    Uri.parse('http://'),
+    headers: <String, String>{
+    'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(searchResults),
+    );
+
+    if (response.statusCode == 200) {
+
+    } else {
+    throw Exception('Failed to load friends');
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +82,6 @@ class _FriendPageState extends State<FriendPage> {
                 onSearch: (query) {
                   setState(() {
                     isSearching = query.isNotEmpty;
-                    searchQuery = query;
                   });
                   if (isSearching) {
                     searchUsers(query);
@@ -164,7 +163,7 @@ class _SearchState extends State<Search> {
 
 
 class FriendComponent extends StatelessWidget {
-  final String? friendName;
+  final Map<String, String>? friendName;
 
   FriendComponent({super.key, this.friendName});
 

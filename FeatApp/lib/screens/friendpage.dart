@@ -22,23 +22,23 @@ class _FriendPageState extends State<FriendPage> {
   // 기존 친구 목록 불러오는 함수
   Future<void> loadFriends() async {
     final Map<String, String> friends = {
-    "userName": userName,
-    "userId": userId,
+      "userName": userName,
+      "userId": userId,
     };
 
     // post 요청 보내기
     final http.Response response = await http.post(
-    Uri.parse('http://'),
-    headers: <String, String>{
-    'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(friends),
+      Uri.parse('http://'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(friends),
     );
 
     if (response.statusCode == 200) {
-
+      print(friends);
     } else {
-    throw Exception('Failed to load friends');
+      throw Exception('Failed to load friends');
     }
   }
 
@@ -49,23 +49,21 @@ class _FriendPageState extends State<FriendPage> {
     final String search = searchController.text;
 
     final Map<String, String> searchResults = {
-    "userName": userName,
-    "userId": userId,
+      "userName": userName,
+      "userId": userId,
     };
 
     // post 요청 보내기
     final http.Response response = await http.post(
-    Uri.parse('http://'),
-    headers: <String, String>{
-    'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(searchResults),
+      Uri.parse('http://'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(searchResults),
     );
 
     if (response.statusCode == 200) {
 
-    } else {
-    throw Exception('Failed to load friends');
     }
   }
 
@@ -74,21 +72,21 @@ class _FriendPageState extends State<FriendPage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-          backgroundColor: Colors.white,
+        backgroundColor: Colors.white,
         appBar: buildAppBar(context, '친구'),
         body: Column(
           children: [
             Search(
-                onSearch: (query) {
-                  setState(() {
-                    isSearching = query.isNotEmpty;
-                  });
-                  if (isSearching) {
-                    searchUsers(query);
-                  } else {
-                    loadFriends();
-                  }
-                },
+              onSearch: (query) {
+                setState(() {
+                  isSearching = query.isNotEmpty;
+                });
+                if (isSearching) {
+                  searchUsers(query);
+                } else {
+                  loadFriends();
+                }
+              },
             ),
             Expanded(
               child: ListView.builder(
@@ -163,9 +161,9 @@ class _SearchState extends State<Search> {
 
 
 class FriendComponent extends StatelessWidget {
-  final Map<String, String>? friendName;
-
-  FriendComponent({super.key, this.friendName});
+  final Map<String, String> friendName;
+  String userStatus = "";
+  FriendComponent({super.key, required this.friendName});
 
   @override
   Widget build(BuildContext context) {
@@ -189,25 +187,74 @@ class FriendComponent extends StatelessWidget {
               ),
             ),
             SizedBox(
-                width: 200,
-                height: 100,
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child:Container(
-                          margin: EdgeInsets.fromLTRB(10, 20, 0, 0),
-                          child: Text('친구1', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500))),
-                    ),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Container(
-                        margin: EdgeInsets.fromLTRB(12, 0, 0, 0),
-                        child: Text('ID', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+              width: 200,
+              height: 100,
+              child: Row(
+                children: [
+                  Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child:Container(
+                            margin: EdgeInsets.fromLTRB(10, 20, 0, 0),
+                            child: Text(friendName['userName'] ?? '알 수 없는 사용자', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500))),
                       ),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Container(
+                          margin: EdgeInsets.fromLTRB(12, 0, 0, 0),
+                          child: Text(friendName['userId'] ?? '', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                        onPressed: () {
+                          if (userStatus == "팔로우") {
+                            userStatus = "요청 중";
+                          } else if (userStatus == "팔로잉") {
+                            userStatus = "팔로우";
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: () {
+                            switch (userStatus) {
+                              case '친구 추가':
+                                return Color(0xfffc4318);
+                              case '친구 요청 중':
+                                return Colors.black;
+                              case '친구 상태':
+                                return Color(0xff3f3f3f);
+                              default:
+                                return Color(0xff3f3f3f);
+                            }
+                          }(),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          elevation: 0.0,
+                        ),
+                        child: Text(
+                          (() {
+                            switch (userStatus) {
+                              case '팔로우':
+                                return '팔로우';
+                              case '요청 중':
+                                return '요청 중';
+                              case '팔로잉':
+                                return '팔로잉';
+                              default:
+                                return '팔로우';
+                            }
+                          })(),
+                        )
                     ),
-                  ],
-                ),
+                  )
+                ],
+              ),
             ),
           ],
         ),
